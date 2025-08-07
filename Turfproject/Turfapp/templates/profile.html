@@ -147,7 +147,7 @@
             <button class="edit-btn" id="editToggleBtn">
                 <i class="fas fa-pencil-alt"></i>
             </button>
-            <img src="https://ui-avatars.com/api/?name=John+Doe&background=random" alt="Profile" class="profile-pic" id="profilePic">
+            <img src="https://ui-avatars.com/api/?name={{ request.user.first_name }}+{{ request.user.last_name }}&background=3a5a78&color=fff" alt="Profile" class="profile-pic" id="profilePic">
             <h2 id="fullName">{{request.user.first_name}} {{request.user.last_name}}</h2>
             <div class="role-badge" id="roleBadge">{{request.user.role}}</div>
         </div>

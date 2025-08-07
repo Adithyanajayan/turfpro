@@ -35,6 +35,9 @@ urlpatterns = [
     path("owner_dashboard/",views.Owner_dashboard,name='owner_dashboard'),
     path("player_booking/",views.Booking_history,name='player_booking'),
     path("owner_turfs/",views.Owner_turf,name='owner_turfs'),
+    path("confirm_booking/<int:booking_id>",views.confirm_booking,name='confirm_booking'),
+    path("decline_booking/<int:booking_id>",views.decline_booking,name='decline_booking'),
+    path("delete_user/",views.delete_user,name='delete_user'),
 
 
     

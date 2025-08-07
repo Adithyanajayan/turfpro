@@ -62,8 +62,14 @@ class Booking(models.Model):
     date = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
-    is_confirmed = models.BooleanField(default=True)
+    
+    STATUS_CHOICES =[('pending','pending'),('confirmed','confirmed'),('declined','declined')] 
+    
+    
+    status = models.CharField(choices=STATUS_CHOICES,default='pending',max_length=15)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    
 
     def __str__(self):
         return f"{self.user.username} booked {self.turf.name} on {self.date}"

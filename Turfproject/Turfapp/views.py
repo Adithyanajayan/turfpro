@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from datetime import datetime,date
 
 def Landing(request):
@@ -207,6 +207,8 @@ def Owner_dashboard(request):
     
     except Booking.DoesNotExist:
         booking_today = None
+    
+
         
     return render(request,"owner_dashboard.html",{'booking_today':booking_today,'upcoming_booking':upcoming_booking})
 @login_required
@@ -222,4 +224,28 @@ def Owner_turf(request):
 
 
     
+@login_required
+def confirm_booking(request, booking_id):
+    if request.method == "POST":
+        booking = get_object_or_404(Booking, id=booking_id)
+
+        booking.status = 'confirmed'  # If you're using this field
+        booking.save()
+        messages.success(request, "Booking confirmed.")
     
+    return redirect(request.META.get('HTTP_REFERER', 'owner_dashboard'))
+
+@login_required
+def decline_booking(request, booking_id):
+    if request.method == "POST":
+        booking = get_object_or_404(Booking, id=booking_id)
+        booking.status = 'declined' 
+        booking.save() # Or set a declined status if you prefer
+        messages.success(request, "Booking declined and removed.")
+    return redirect(request.META.get('HTTP_REFERER', 'owner_dashboard'))
+
+@login_required
+def delete_user(request):
+    user=request.user
+    user.delete()
+    return redirect("landing")
