@@ -91,7 +91,7 @@ def Home(request):
 
 @login_required
 def Turfs(request):
-    turfs = Turf_details.objects.all()
+    turfs = Turf_details.objects.filter(status='enabled')
     
     return render(request,"turf.html",{'turfs':turfs})
 
@@ -146,7 +146,9 @@ def Profile(request):
         if phone:
             user.phone = phone
         request.user.save()
+        messages.success(request, "User information updated successfully!")
         return render(request,"profile.html")
+    messages.success(request, "operartion unsuccessfull")
     return render(request,"profile.html")
 
 
@@ -194,6 +196,7 @@ def Turf_booking(request,id):
         messages.success(request, "Booking successful!")
         return redirect('home')
                 
+    messages.success(request, "Turf booking unsuccessfull!")
     return render(request,"turf_booking.html",{'turf':turf})
 
         
@@ -214,7 +217,7 @@ def Owner_dashboard(request):
 @login_required
 def Booking_history(request):
     user_id = request.user.id
-    bookings = Booking.objects.filter(user_id=user_id)
+    bookings = Booking.objects.filter(user_id=user_id).order_by('date', 'start_time')
     return render(request,'player_booking.html',{'bookings':bookings})
 
 @login_required
@@ -241,11 +244,84 @@ def decline_booking(request, booking_id):
         booking = get_object_or_404(Booking, id=booking_id)
         booking.status = 'declined' 
         booking.save() # Or set a declined status if you prefer
-        messages.success(request, "Booking declined and removed.")
+        messages.error(request, "Booking declined and removed.")
     return redirect(request.META.get('HTTP_REFERER', 'owner_dashboard'))
 
 @login_required
-def delete_user(request):
+def delete_account(request):
     user=request.user
-    user.delete()
-    return redirect("landing")
+    if user.role == 'owner':
+        today = date.today()
+        turfs = Turf_details.objects.filter(owner=user)
+        upcoming_booking = Booking.objects.filter(turf_id__in=turfs, date__gte=today)
+        if not upcoming_booking.exists():
+            turfs.delete()
+            user.delete()
+            messages.success(request, "User account and Turfs deleted")
+            return redirect("landing")
+        
+            
+            
+    else:
+        user.delete()
+        messages.success(request, "User account deleted successfully!")
+        return redirect("landing")
+    messages.success(request, "Account cannot be deleted ")
+    return render(request,"profile.html")
+
+@login_required  
+def manage_turf(request, turf_id):
+    turf = get_object_or_404(Turf_details, id=turf_id)
+
+    if request.method == "POST":
+        # Update basic info
+        turf.name = request.POST.get("name")
+        turf.location = request.POST.get("location")
+        turf.price = request.POST.get("price")
+        turf.player_capacity = request.POST.get("player_capacity")
+        turf.length = request.POST.get("length") or None
+        turf.width = request.POST.get("width") or None
+        turf.opening_time = request.POST.get("opening_time")
+        turf.closing_time = request.POST.get("closing_time")
+
+        # Sports available (multiple checkboxes)
+        sports = request.POST.getlist("sport_types")
+        turf.sports_available = sports  # If using JSONField or ArrayField
+
+        # Facilities
+        turf.has_floodlight = bool(request.POST.get("has_floodlight"))
+        turf.has_drinking_water = bool(request.POST.get("has_drinking_water"))
+
+        # Additional features
+        turf.extra_features = request.POST.get("extra_features")
+
+        # Image update
+        if request.FILES.get("image"):
+            turf.image = request.FILES["image"]
+
+        turf.save()
+        messages.success(request, "Turf information updated successfully!")
+        return redirect("manage_turf", turf_id=turf.id)
+
+    return render(request, "manage_turf.html", {"turf": turf})
+
+@login_required
+def toggle_status(request, turf_id):
+    turf = get_object_or_404(Turf_details, id=turf_id)
+    turf.status = "disabled" if turf.status == "enabled" else "enabled"
+    turf.save()
+    messages.success(request, f"Turf status changed to {turf.status.capitalize()}")
+    return redirect("manage_turf", turf_id=turf.id)
+
+@login_required
+def delete_turf(request, turf_id):
+    turf = get_object_or_404(Turf_details, id=turf_id)
+    today = date.today()
+    upcoming_booking = Booking.objects.filter(turf=turf,date__gte=today)
+    if not upcoming_booking.exists():
+        turf.delete()
+        messages.success(request, "Turf deleted successfully.")
+        return redirect("owner_dashboard")
+    messages.error(request, "Cannot delete turf with upcoming bookings.")
+    return render(request,"manage_turf.html", {"turf": turf})
+    

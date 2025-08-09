@@ -37,8 +37,10 @@ urlpatterns = [
     path("owner_turfs/",views.Owner_turf,name='owner_turfs'),
     path("confirm_booking/<int:booking_id>",views.confirm_booking,name='confirm_booking'),
     path("decline_booking/<int:booking_id>",views.decline_booking,name='decline_booking'),
-    path("delete_user/",views.delete_user,name='delete_user'),
-
+    path("delete_account/",views.delete_account,name='delete_account'),
+    path("delete_turf/<int:turf_id>",views.delete_turf,name='delete_turf'),
+    path("turf_management/<int:turf_id>",views.manage_turf,name='manage_turf'),
+    path("toggle_status/<int:turf_id>",views.toggle_status,name='toggle_status'),
 
     
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

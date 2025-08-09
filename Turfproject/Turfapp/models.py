@@ -52,7 +52,16 @@ class Turf_details(models.Model):
         blank=True,
         help_text="Any other features not listed above"
     )
-
+    
+    STATUS_CHOICES =[('enabled','Enabled'),('disabled','Disabled')] 
+    
+    status = models.CharField(max_length=10,choices=STATUS_CHOICES,default='enabled')
+    
+    
+    def toggle_status(self):
+        self.status = 'disabled' if self.status == 'enabled' else 'enabled'
+        self.save()
+        return self.status
     
     
     
@@ -73,13 +82,17 @@ class Booking(models.Model):
 
     def __str__(self):
         return f"{self.user.username} booked {self.turf.name} on {self.date}"
-
+    @property
     def duration_hours(self):
         from datetime import datetime, timedelta
         start = datetime.combine(self.date, self.start_time)
         end = datetime.combine(self.date, self.end_time)
         duration = end - start
         return duration.total_seconds() / 3600
+    @property
+    def total_price(self):
+        return self.duration_hours * float(self.turf.price)
+
 
 
 class Bill(models.Model):
