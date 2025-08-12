@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking History | TurfPro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #45a049;
+            --primary-light: #e8f5e9;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --error: #e74c3c;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 28px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-buttons .btn {
+            margin-left: 15px;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-light);
+        }
+
+        .btn-solid {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-solid:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 5%;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            color: var(--dark);
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        .filter-control {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Booking Cards */
+        .booking-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .booking-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 150px 1fr auto;
+            transition: transform 0.3s;
+        }
+
+        .booking-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .booking-image {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .booking-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .booking-details {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .booking-title h2 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .booking-location {
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+        }
+
+        .booking-location i {
+            margin-right: 5px;
+            color: var(--primary);
+        }
+
+        .booking-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background-color: #e1f5fe;
+            color: #0288d1;
+        }
+
+        .status-confirmed {
+            background-color: #e8f5e9;
+            color: #388e3c;
+        }
+
+        .status-declined {
+            background-color: #ffebee;
+            color: #d32f2f;
+        }
+
+        .booking-meta {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .meta-label {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+
+        .meta-value {
+            font-weight: 600;
+        }
+
+        .booking-actions {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            min-width: 150px;
+            border-left: 1px solid #eee;
+        }
+
+        .booking-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .booking-price span {
+            font-size: 14px;
+            font-weight: normal;
+            color: var(--gray);
+        }
+
+        .action-btn {
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            background: none;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-light);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .empty-state i {
+            font-size: 50px;
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+
+        .empty-state h2 {
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .empty-state p {
+            color: var(--gray);
+            margin-bottom: 20px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 60px 5% 30px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-column h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--primary);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .booking-card {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-image {
+                height: 200px;
+            }
+
+            .booking-actions {
+                border-left: none;
+                border-top: 1px solid #eee;
+                flex-direction: row;
+                padding: 15px;
+            }
+
+            .booking-price {
+                margin-right: auto;
+                text-align: left;
+            }
+
+            .filter-controls {
+                flex-direction: column;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .booking-meta {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .booking-meta {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-actions {
+                flex-direction: column;
+            }
+
+            .booking-price {
+                margin-right: 0;
+                text-align: center;
+                width: 100%;
+            }
+        }
+
+        /* Cancelled Booking Card Styles */
+        .cancelled-booking-card {
+            display: flex;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            background: white;
+            border-left: 5px solid #ff4444;
+            position: relative;
+        }
+
+        .cancelled-booking-image {
+            width: 250px;
+            position: relative;
+        }
+
+        .cancelled-booking-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cancelled-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 68, 68, 0.8);
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .cancelled-booking-content {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cancelled-booking-header h3 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+
+        .location {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .info-row {
+            display: flex;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .label {
+            font-weight: 600;
+            color: #555;
+            width: 120px;
+        }
+
+        .value {
+            color: #333;
+        }
+
+        .original-booking-info {
+            padding: 15px 0;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+
+        .cancellation-details {
+            padding: 15px 0;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+
+        .cancellation-details h4 {
+            margin: 0 0 10px 0;
+            color: #ff4444;
+            font-size: 16px;
+        }
+
+        .refund-processing {
+            color: #ff9800;
+        }
+
+        .refund-completed {
+            color: #4CAF50;
+        }
+
+        .refund-failed {
+            color: #f44336;
+        }
+
+        .cancelled-booking-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            margin-top: auto;
+        }
+
+        .original-price {
+            font-size: 14px;
+            color: #888;
+        }
+
+        .view-receipt-btn,
+        .contact-support-btn {
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .view-receipt-btn {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            color: #333;
+        }
+
+        .contact-support-btn {
+            background: #4285f4;
+            border: 1px solid #4285f4;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">
+                <i class="fas fa-futbol"></i>
+                TurfPro
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'turfs' %}">Turfs</a></li>
+                <li><a href="{% url 'player_booking' %}" class="active">My Bookings</a></li>
+                <li><a href="{% url 'profile' %}">Profile</a></li>
+            </ul>
+
+            <div class="nav-buttons">
+                <a href="#" class="btn btn-outline">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="page-header">
+            <h1>My Booking History</h1>
+
+        </div>
+
+        <!-- Booking List -->
+        <div class="booking-list" id="bookingList">
+            <!-- Booking Card 1 (Upcoming) -->
+            {% for booking in bookings %}
+            <div class="booking-card" data-status="upcoming" data-date="2023-11-15">
+                <div class="booking-image">
+                    <img src="{{booking.turf.image.url}}">
+                </div>
+                <div class="booking-details">
+                    <div class="booking-header">
+                        <div class="booking-title">
+                            <h2>{{booking.turf.name}}</h2>
+                            <div class="booking-location">
+                                <i class="fas fa-map-marker-alt"></i> {{booking.turf.location}}
+                            </div>
+                        </div>
+                        <div class="booking-status status-{{ booking.status|lower }}">{{booking.status}}</div>
+                    </div>
+
+                    <div class="booking-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Booking Date</span>
+                            <span class="meta-value">{{booking.date}}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Time Slot</span>
+                            <span class="meta-value">{{booking.start_time}}-{{booking.end_time}}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Players</span>
+                            <span class="meta-value">12/14</span>
+                        </div>
+                    </div>
+
+                    <div class="booking-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Booking Status </span>
+                            <span class="meta-value">{{booking.status}}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Sport</span>
+                            <span class="meta-value">Football</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Duration</span>
+                            <span class="meta-value">{{booking.duration_hours}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="booking-actions">
+                    <div class="booking-price">
+                        {{booking.total_price}} <span>total</span>
+                    </div>
+                    <button class="action-btn btn-outline">View Details</button>
+                    <a href="{% url 'cancel_booking' booking.id %}" class="action-btn btn-primary">
+                        Cancel Booking
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Cancelled Booking Card (Separate Design) -->
+             {% for cancel in cancelled %}
+            <div class="cancelled-booking-card">
+                <div class="cancelled-booking-image">
+                    <img src="{{ cancel.turf.image.url }}">
+                    <div class="cancelled-overlay">CANCELLED</div>
+                </div>
+
+                <div class="cancelled-booking-content">
+                    <div class="cancelled-booking-header">
+                        <h3>{{ cancel.turf.name }}</h3>
+                        <div class="location">
+                            <i class="fas fa-map-marker-alt"></i> {{ cancel.turf.location }}
+                        </div>
+                    </div>
+
+                    <div class="original-booking-info">
+                        <div class="info-row">
+                            <span class="label">Original Date:</span>
+                            <span class="value">{{ cancel.date }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Time Slot:</span>
+                            <span class="value">{{ cancel.start_time }} - {{ cancel.end_time }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Sport:</span>
+                            <span class="value">Football</span>
+                        </div>
+                    </div>
+
+                    <div class="cancellation-details">
+                        <h4>Cancellation Details</h4>
+                        <div class="info-row">
+                            <span class="label">Cancelled On:</span>
+                            <span class="value">{{ cancel.cancelled_at|date:"Y-m-d" }} at {{ cancel.cancelled_at|date:"h-i A" }}</span>
+                        </div>
+                        <!-- <div class="info-row">
+                            <span class="label">Refund Status:</span>
+                            <span class="value refund-{{ booking.refund_status|lower }}">
+                                {{ booking.refund_status|default:"Processing" }}
+                            </span>
+                        </div> -->
+                        <div class="info-row"> 
+                            <span class="label">Amount Refunded:</span>
+                            <span class="value">₹{{ cancel.total_price }}</span>
+                        </div>
+                    </div>
+
+                    <div class="cancelled-booking-footer">
+                        <div class="original-price">
+                            <span>Original Price: ₹{{ cancel.total_price }}</span>
+                        </div>
+                        <button class="view-receipt-btn">View Receipt</button>
+                        <button class="contact-support-btn">Contact Support</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+
+            <!-- Empty State (hidden by default) -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <i class="far fa-calendar-check"></i>
+                <h2>No Bookings Found</h2>
+                <p>You haven't made any bookings yet. Explore our turfs and book your first game!</p>
+                <a href="turfs.html" class="btn btn-solid">Browse Turfs</a>
+            </div>
+        </div>
+
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>TurfPro</h3>
+                    <p>Your premier platform for booking sports turfs online. We connect players with quality turfs for
+                        unforgettable sporting experiences.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="turfs.html">Turfs</a></li>
+                        <li><a href="booking-history.html">My Bookings</a></li>
+                        <li><a href="profile.html">Profile</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Support</h3>
+                    <ul>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="privacy.html">Privacy Policy</a></li>
+                        <li><a href="terms.html">Terms of Service</a></li>
+                        <li><a href="refund.html">Refund Policy</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Sports Lane, City</li>
+                        <li><i class="fas fa-phone"></i> +91 9876543210</li>
+                        <li><i class="fas fa-envelope"></i> hello@turfpro.com</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="copyright">
+                <p>&copy; 2023 TurfPro. All rights reserved.</p>
+            </div>
+        </footer>
+
+        <!-- <script>
+        // Filter functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusFilter = document.getElementById('statusFilter');
+            const dateFilter = document.getElementById('dateFilter');
+            const bookingList = document.getElementById('bookingList');
+            const bookings = Array.from(document.querySelectorAll('.booking-card'));
+            const emptyState = document.getElementById('emptyState');
+            
+            function applyFilters() {
+                const statusValue = statusFilter.value;
+                const dateValue = dateFilter.value;
+                let visibleCount = 0;
+                
+                bookings.forEach(booking => {
+                    const bookingStatus = booking.getAttribute('data-status');
+                    const bookingDate = booking.getAttribute('data-date');
+                    
+                    // Status filter
+                    const statusMatch = statusValue === 'all' || bookingStatus === statusValue;
+                    
+                    // Date filter (simplified for demo)
+                    let dateMatch = true;
+                    if (dateValue === 'recent') {
+                        // In a real app, you would sort by date
+                    } else if (dateValue === 'oldest') {
+                        // In a real app, you would sort by date
+                    }
+                    
+                    if (statusMatch && dateMatch) {
+                        booking.style.display = 'grid';
+                        visibleCount++;
+                    } else {
+                        booking.style.display = 'none';
+                    }
+                });
+                
+                // Show empty state if no bookings match filters
+                if (visibleCount === 0) {
+                    bookingList.style.display = 'none';
+                    emptyState.style.display = 'block';
+                } else {
+                    bookingList.style.display = 'grid';
+                    emptyState.style.display = 'none';
+                }
+                
+                // In a real app, you would also sort the bookings here
+            }
+            
+            // Event listeners
+            statusFilter.addEventListener('change', applyFilters);
+            dateFilter.addEventListener('change', applyFilters);
+            
+            // Initialize filters
+            applyFilters();
+            
+            // Booking action buttons
+            document.querySelectorAll('.action-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const action = this.textContent.trim();
+                    const card = this.closest('.booking-card');
+                    const turfName = card.querySelector('.booking-title h2').textContent;
+                    
+                    if (action === 'Cancel Booking') {
+                        if (confirm(`Are you sure you want to cancel your booking at ${turfName}?`)) {
+                            // In a real app, you would make an API call to cancel
+                            card.querySelector('.booking-status').textContent = 'Cancelled';
+                            card.querySelector('.booking-status').className = 'booking-status status-cancelled';
+                            this.textContent = 'Book Again';
+                            card.setAttribute('data-status', 'cancelled');
+                            applyFilters();
+                            alert('Booking cancelled successfully.');
+                        }
+                    } else if (action === 'Book Again') {
+                        // In a real app, you would redirect to booking page with turf pre-selected
+                        alert(`Redirecting to book ${turfName} again...`);
+                    } else if (action === 'View Details') {
+                        // In a real app, you would show detailed booking info
+                        alert(`Showing details for booking at ${turfName}`);
+                    }
+                });
+            });
+        });
+    </script> -->
+</body>
+
+</html>

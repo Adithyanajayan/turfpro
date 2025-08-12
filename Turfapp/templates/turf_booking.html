@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Turf | TurfPro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #45a049;
+            --primary-light: #e8f5e9;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --error: #e74c3c;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+        }
+
+        .page-description {
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .booking-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .booking-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        select:focus,
+        input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        .time-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .turf-info {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+
+        .turf-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .turf-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .turf-details h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .turf-location {
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .available-slots {
+            margin-top: 0;
+        }
+
+        .slots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .slot-card {
+            background: white;
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .slot-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+
+        .slot-card h3 {
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .slot-price {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .slot-card button {
+            background-color: var(--primary);
+            margin-top: 0.5rem;
+        }
+
+        .slot-card button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .error-message {
+            color: var(--error);
+            background: #fdecea;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .alert {
+            padding: 12px 20px;
+            border-radius: 5px;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .alert-info {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        .alert i {
+            font-size: 1.2rem;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .booking-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .time-inputs {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .slots-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    {% if messages %}
+    <div class="alert-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {% if message.tags == 'success' %}
+            <i class="fas fa-check-circle"></i>
+            {% elif message.tags == 'error' %}
+            <i class="fas fa-exclamation-circle"></i>
+            {% elif message.tags == 'warning' %}
+            <i class="fas fa-exclamation-triangle"></i>
+            {% else %}
+            <i class="fas fa-info-circle"></i>
+            {% endif %}
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    <script>
+    // Wait for the DOM to be fully loaded
+    document.addEventListener("DOMContentLoaded", function () {
+        // Select all alert elements
+        const alerts = document.querySelectorAll(".alert");
+
+        // Set a timeout to hide alerts after 2 seconds
+        setTimeout(() => {
+            alerts.forEach(alert => {
+                alert.style.transition = "opacity 0.5s ease";
+                alert.style.opacity = "0";
+
+                // Optional: Remove the element from DOM after fade out
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 2000);
+    });
+</script>
+    {% endif %}
+
+    <div class="container">
+        <header>
+            <h1>Book Your Turf</h1>
+            <p class="page-description">Select your preferred date and time slot to book {{ turf.name }}</p>
+        </header>
+
+        <div class="booking-section">
+            <div class="booking-card">
+                <div class="turf-info">
+                    <div class="turf-image">
+                        <img src="{{ turf.image.url }}" alt="{{ turf.name }}">
+                    </div>
+                    <div class="turf-details">
+                        <h3>{{ turf.name }}</h3>
+                        <div class="turf-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            {{ turf.location }}
+                        </div>
+                        <div class="turf-price">₹{{ turf.price }}/hour</div>
+                    </div>
+                </div>
+
+                <!-- Error message placeholder -->
+                <div class="error-message" id="errorMessage">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="errorText">Error message will appear here</span>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="turf" value="{{ turf.id }}">
+
+                    <!-- Date Selection -->
+                    <div class="form-group">
+                        <label for="date">Booking Date</label>
+                        <input type="date" id="date" name="date" required 
+                               min="{% now 'Y-m-d' %}" 
+                               value="{% now 'Y-m-d' %}">
+                    </div>
+
+                    <!-- Time Selection -->
+                    <div class="form-group">
+                        <label>Time Slot</label>
+                        <div class="time-inputs">
+                            <div>
+                                <label for="start_time">Start Time</label>
+                                <input type="time" id="start_time" name="start_time" 
+                                       min="{{ turf.opening_time|time:'H:i' }}" 
+                                       max="{{ turf.closing_time|time:'H:i' }}" 
+                                       required>
+                            </div>
+                            <div>
+                                <label for="end_time">End Time</label>
+                                <input type="time" id="end_time" name="end_time" 
+                                       min="{{ turf.opening_time|time:'H:i' }}" 
+                                       max="{{ turf.closing_time|time:'H:i' }}" 
+                                       required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" name="custom_booking">
+                        <i class="fas fa-calendar-check"></i> Book Now
+                    </button>
+                </form>
+            </div>
+
+            <!-- Available Slots Section -->
+            <div class="booking-card available-slots">
+                <h2>Available Time Slots</h2>
+                <p>Select a date to see available slots</p>
+
+                <div id="dateDisplay" style="margin-bottom: 1rem; font-weight: 600;"></div>
+
+                <div class="slots-grid" id="slotsContainer">
+                    <!-- Slots will be populated by JavaScript -->
+                    <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                        <i class="far fa-calendar-alt" style="font-size: 3rem; color: var(--gray); margin-bottom: 1rem;"></i>
+                        <h3>Select a date to view available slots</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.getElementById('date');
+            const startTimeInput = document.getElementById('start_time');
+            const endTimeInput = document.getElementById('end_time');
+            const slotsContainer = document.getElementById('slotsContainer');
+            const dateDisplay = document.getElementById('dateDisplay');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            // Set default time values based on turf opening hours
+            startTimeInput.value = '{{ turf.opening_time|time:"H:i" }}';
+            endTimeInput.value = '{{ turf.closing_time|time:"H:i" }}';
+            
+            // Date input change handler
+            dateInput.addEventListener('change', function() {
+                const selectedDate = new Date(this.value);
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                dateDisplay.textContent = selectedDate.toLocaleDateString('en-US', options);
+                
+                // In a real implementation, you would fetch available slots for this date
+                // This is a mock implementation for demonstration
+                if (this.value) {
+                    fetchAvailableSlots(this.value);
+                }
+            });
+            
+            // Mock function to fetch available slots
+            function fetchAvailableSlots(date) {
+                // Show loading state
+                slotsContainer.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+                        <p>Loading available slots...</p>
+                    </div>
+                `;
+                
+                // Simulate API call delay
+                setTimeout(() => {
+                    // Mock data - in a real app, this would come from your Django backend
+                    const mockSlots = [
+                        { start: '10:00', end: '12:00', price: 1000 },
+                        { start: '14:00', end: '16:00', price: 1000 },
+                        { start: '17:00', end: '19:00', price: 1200 },
+                        { start: '20:00', end: '22:00', price: 1500 }
+                    ];
+                    
+                    if (mockSlots.length > 0) {
+                        slotsContainer.innerHTML = '';
+                        mockSlots.forEach(slot => {
+                            const slotElement = document.createElement('div');
+                            slotElement.className = 'slot-card';
+                            slotElement.innerHTML = `
+                                <h3>${slot.start} - ${slot.end}</h3>
+                                <p class="slot-price">₹${slot.price} (${calculateHours(slot.start, slot.end)} hrs)</p>
+                                <form method="post" action="">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="turf" value="{{ turf.id }}">
+                                    <input type="hidden" name="date" value="${date}">
+                                    <input type="hidden" name="start_time" value="${slot.start}">
+                                    <input type="hidden" name="end_time" value="${slot.end}">
+                                    <input type="hidden" name="predefined_slot" value="true">
+                                    <button type="submit">
+                                        <i class="fas fa-calendar-plus"></i> Book This Slot
+                                    </button>
+                                </form>
+                            `;
+                            slotsContainer.appendChild(slotElement);
+                        });
+                    } else {
+                        slotsContainer.innerHTML = `
+                            <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                                <i class="far fa-calendar-times" style="font-size: 3rem; color: var(--gray); margin-bottom: 1rem;"></i>
+                                <h3>No available slots for this date</h3>
+                                <p>Please try another date</p>
+                            </div>
+                        `;
+                    }
+                }, 1000);
+            }
+            
+            // Calculate hours between two times
+            function calculateHours(start, end) {
+                const [startH, startM] = start.split(':').map(Number);
+                const [endH, endM] = end.split(':').map(Number);
+                return ((endH * 60 + endM) - (startH * 60 + startM)) / 60;
+            }
+            
+            // Form validation
+            const bookingForm = document.querySelector('form');
+            if (bookingForm) {
+                bookingForm.addEventListener('submit', function(e) {
+                    const startTime = startTimeInput.value;
+                    const endTime = endTimeInput.value;
+                    
+                    if (startTime >= endTime) {
+                        e.preventDefault();
+                        showError('End time must be after start time');
+                        return;
+                    }
+                    
+                    // Additional validation can be added here
+                });
+            }
+            
+            function showError(message) {
+                errorMessage.style.display = 'flex';
+                document.getElementById('errorText').textContent = message;
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                }, 5000);
+            }
+            
+            // Trigger date change on load if date is set
+            if (dateInput.value) {
+                dateInput.dispatchEvent(new Event('change'));
+            }
+        });
+    </script> -->
+</body>
+</html>

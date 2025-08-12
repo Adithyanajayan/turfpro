@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Dashboard | Booking Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        :root {
+            --primary-color: #3a5a78;
+            --secondary-color: #f8f9fa;
+            --accent-color: #4e9f3d;
+            --danger-color: #e63946;
+            --light-blue: #e3f2fd;
+            --dark-blue: #1a3e72;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .sidebar {
+            background-color: var(--primary-color);
+            color: white;
+            height: 100vh;
+            position: fixed;
+            padding-top: 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 25px;
+            background-color: #f5f7fa;
+        }
+
+        .dashboard-card {
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: none;
+            margin-bottom: 25px;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 8px 8px 0 0 !important;
+            padding: 15px 20px;
+            border-bottom: none;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9);
+            border-radius: 5px;
+            margin-bottom: 5px;
+            padding: 10px 15px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white;
+            transform: translateX(3px);
+        }
+
+        .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            font-weight: 500;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .badge-confirmed {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .badge-pending {
+            background-color: #ffd166;
+            color: #333;
+        }
+
+        .badge-cancelled {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .player-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+            border: 2px solid #e3f2fd;
+        }
+
+        .stat-card {
+            border-left: 4px solid var(--primary-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 60px;
+            background-color: var(--light-blue);
+            border-radius: 50%;
+            opacity: 0.3;
+            transform: translate(30%, -30%);
+        }
+
+        .stat-card h3 {
+            font-weight: 600;
+            color: var(--dark-blue);
+        }
+
+        .btn {
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #2c4a6a;
+            border-color: #2c4a6a;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(58, 90, 120, 0.2);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--light-blue);
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background-color: var(--light-blue);
+            color: var(--primary-color);
+            font-weight: 600;
+            border-top: none;
+            padding: 12px 15px;
+        }
+
+        .table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+            background-color: var(--light-blue);
+        }
+
+        .table td {
+            padding: 12px 15px;
+            vertical-align: middle;
+            border-color: #f1f5f9;
+        }
+
+        .datepicker {
+            border-radius: 6px;
+            padding: 8px 15px;
+            border: 1px solid #e2e8f0;
+            font-weight: 500;
+        }
+
+        .datepicker:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(58, 90, 120, 0.1);
+        }
+
+        .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom: none;
+        }
+
+        .avatar-lg {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .text-accent {
+            color: var(--accent-color);
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+           
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .alert {
+            padding: 12px 20px;
+            border-radius: 5px;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .alert-info {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        .alert i {
+            font-size: 1.2rem;
+        }
+
+    </style>
+</head>
+<body>
+     {% if messages %}
+    <div class="alert-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {% if message.tags == 'success' %}
+            <i class="fas fa-check-circle"></i>
+            {% elif message.tags == 'error' %}
+            <i class="fas fa-exclamation-circle"></i>
+            {% elif message.tags == 'warning' %}
+            <i class="fas fa-exclamation-triangle"></i>
+            {% else %}
+            <i class="fas fa-info-circle"></i>
+            {% endif %}
+            {{ message }}
+        </div>
+        {% endfor %}
+        </div>
+        <script>
+    // Wait for the DOM to be fully loaded
+    document.addEventListener("DOMContentLoaded", function () {
+        // Select all alert elements
+        const alerts = document.querySelectorAll(".alert");
+
+        // Set a timeout to hide alerts after 2 seconds
+        setTimeout(() => {
+            alerts.forEach(alert => {
+                alert.style.transition = "opacity 0.5s ease";
+                alert.style.opacity = "0";
+
+                // Optional: Remove the element from DOM after fade out
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 2000);
+    });
+</script>
+    {% endif %}
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-2 col-md-3 sidebar">
+                <div class="text-center mb-4">
+                    <img src="https://ui-avatars.com/api/?name={{request.user.first_name }}+{{request.user.last_name }}&background=3a5a78&color=fff" alt="Owner"
+                        class="avatar-lg mb-2">
+                    <h5>{{request.user.first_name|capfirst}} {{ request.user.last_name|capfirst}}</h5>
+                    <small class="text-white-50">Turf Owner</small>
+                </div>
+
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <i class="fas fa-calendar-alt"></i> Booking Schedule
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'owner_turfs' %}">
+                            <i class="fas fa-map-marked-alt"></i> My Turfs
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'turfreg' %}">
+                            <i class="fas fa-plus-circle"></i> Add Turf
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'profile' %}">
+                            <i class="fas fa-user-cog"></i> Profile
+                        </a>
+                    </li>
+                    <li class="nav-item mt-3">
+                        <a class="nav-link text-white bg-danger bg-opacity-20" href="{% url 'logout' %}">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-10 col-md-9 main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="mb-0 text-primary"><i class="fas fa-calendar-alt me-2"></i>Booking Management</h2>
+                    <div>
+                        <button class="btn btn-primary me-2">
+                            <i class="fas fa-plus me-1"></i> New Booking
+                        </button>
+                        <button class="btn btn-outline-secondary">
+                            <i class="fas fa-download me-1"></i> Export
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card dashboard-card stat-card">
+                            <div class="card-body">
+                                <h6 class="text-muted">Today's Bookings</h6>
+                                <h3 class="mb-0">8</h3>
+                                <small class="text-success">
+                                    <i class="fas fa-arrow-up me-1"></i> 2 from yesterday
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card dashboard-card stat-card">
+                            <div class="card-body">
+                                <h6 class="text-muted">Weekly Revenue</h6>
+                                <h3 class="mb-0">$1,240</h3>
+                                <small class="text-success">
+                                    <i class="fas fa-arrow-up me-1"></i> 15% increase
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card dashboard-card stat-card">
+                            <div class="card-body">
+                                <h6 class="text-muted">Active Players</h6>
+                                <h3 class="mb-0">42</h3>
+                                <small class="text-success">
+                                    <i class="fas fa-user-plus me-1"></i> 5 new
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card dashboard-card stat-card">
+                            <div class="card-body">
+                                <h6 class="text-muted">Cancellations</h6>
+                                <h3 class="mb-0">3</h3>
+                                <small class="text-danger">
+                                    <i class="fas fa-exclamation-circle me-1"></i> 2 this week
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Today's Bookings -->
+                <div class="card dashboard-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="far fa-calendar me-2"></i>Today's Bookings</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Time</th>
+                                        <th>Player</th>
+                                        <th>Contact</th>
+                                        <th>Turf</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for booking in booking_today %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ booking.start_time }} - {{ booking.end_time }}</strong>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name={{ booking.user.first_name }}+{{ booking.user.last_name }}&background=3a5a78&color=fff"
+                                                    alt="Player" class="player-avatar">
+                                                <span>{{ booking.user.first_name|capfirst }} {{ booking.user.last_name|capfirst }}</span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {{ booking.user.phone }}<br>
+                                            <small class="text-muted">{{ booking.user.email }}</small>
+                                        </td>
+                                        <td>{{ booking.turf.name|upper }}</td>
+                                        <td>
+                                            {% if booking.status == 'confirmed' %}
+                                            <span class="badge badge-confirmed">
+                                                <i class="fas fa-check-circle me-1"></i> Confirmed
+                                            </span>
+                                            {% elif booking.status == 'pending' %}
+                                            <span class="badge bg-warning text-white">
+                                                <i class="fas fa-clock  me-1"></i>Pending
+                                            </span>
+                                            {% else %}
+                                            <span class="badge bg-danger text-white">
+                                                <i class="fas fa-times-circle me-1" ></i>Declined
+                                            </span>
+                                            {% endif %}
+                                        </td>
+
+                                        <td>
+                                            <!-- Confirm Button -->
+                                            <form method="post" action="{% url 'confirm_booking' booking.id %}"
+                                                style="display: inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-outline-success"
+                                                    title="Confirm">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+
+                                            <!-- Decline Button -->
+                                            <form method="post" action="{% url 'decline_booking' booking.id %}"
+                                                style="display: inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                    title="Decline">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upcoming Bookings -->
+                <div class="card dashboard-card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="fas fa-calendar-check me-2"></i>Upcoming Bookings</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Date & Time</th>
+                                        <th>Player</th>
+                                        <th>Turf</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for booking in upcoming_booking %}
+                                    <tr>
+                                        <td>
+                                            <strong>{{ booking.date }}</strong><br>
+                                            <small>{{ booking.start_time }} - {{ booking.end_time }}</small>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name={{ booking.user.first_name }}+{{ booking.user.last_name }}&background=3a5a78&color=fff"
+                                                    alt="Player" class="player-avatar">
+                                                <span>{{ booking.user.first_name|capfirst }} {{ booking.user.last_name|capfirst }}</span>
+                                            </div>
+                                        </td>
+                                        <td>{{ booking.turf.name|upper }}</td>
+                                        <td>
+                                            {% if booking.status == 'confirmed' %}
+                                            <span class="badge badge-confirmed" class="text-success">
+                                                <i class="fas fa-check-circle me-1"></i> Confirmed
+                                            </span>
+                                            {% elif booking.status == 'pending' %}
+                                            <span class="badge badge-confirmed" class="text-warning">
+                                                <i class="fas fa-check-circle me-1"></i>Pending
+                                            </span>
+                                            {% else %}
+                                            <span class="badge bg-danger text-white">
+                                                <i class="fas fa-times-circle me-1"></i> Declined
+                                            </span>
+
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <!-- Confirm Button -->
+                                            <form method="post" action="{% url 'confirm_booking' booking.id %}"
+                                                style="display: inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-outline-success"
+                                                    title="Confirm">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+
+                                            <!-- Decline Button -->
+                                            <form method="post" action="{% url 'decline_booking' booking.id %}"
+                                                style="display: inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                    title="Decline">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-8">
+                        <!-- Recent Activity -->
+                        <div class="card dashboard-card">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Activity</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex mb-3">
+                                    <div class="flex-shrink-0">
+                                        <span class="badge bg-primary rounded-circle p-2 me-3">
+                                            <i class="fas fa-calendar-plus"></i>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">New booking created</h6>
+                                        <small class="text-muted">Today, 10:30 AM - Turf B</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex mb-3">
+                                    <div class="flex-shrink-0">
+                                        <span class="badge bg-success rounded-circle p-2 me-3">
+                                            <i class="fas fa-check-circle"></i>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">Payment received</h6>
+                                        <small class="text-muted">Today, 9:15 AM - $40.00</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex mb-3">
+                                    <div class="flex-shrink-0">
+                                        <span class="badge bg-warning rounded-circle p-2 me-3">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">Booking cancelled</h6>
+                                        <small class="text-muted">Yesterday, 4:45 PM - Turf A</small>
+                                    </div>
+                                </div>
+                                <div class="d-flex">
+                                    <div class="flex-shrink-0">
+                                        <span class="badge bg-info rounded-circle p-2 me-3">
+                                            <i class="fas fa-user-plus"></i>
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <h6 class="mb-0">New player registered</h6>
+                                        <small class="text-muted">Yesterday, 2:30 PM</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <!-- Player Details -->
+                        <div class="card dashboard-card">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-user-tie me-2"></i>Player Details</h5>
+                            </div>
+                            <div class="card-body text-center">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Player"
+                                    class="avatar-lg mb-3">
+                                <h4>John Smith</h4>
+                                <p class="text-muted mb-3">Regular Player</p>
+
+                                <div class="d-flex justify-content-center mb-3">
+                                    <div class="text-center px-3">
+                                        <div class="h5 mb-0">12</div>
+                                        <small class="text-muted">Bookings</small>
+                                    </div>
+                                    <div class="text-center px-3">
+                                        <div class="h5 mb-0">$480</div>
+                                        <small class="text-muted">Spent</small>
+                                    </div>
+                                </div>
+
+                                <div class="text-start">
+                                    <div class="mb-2">
+                                        <h6><i class="fas fa-envelope me-2 text-primary"></i>Email</h6>
+                                        <p class="ps-4 mb-0">john@example.com</p>
+                                    </div>
+                                    <div class="mb-2">
+                                        <h6><i class="fas fa-phone me-2 text-primary"></i>Phone</h6>
+                                        <p class="ps-4 mb-0">+1 (555) 123-4567</p>
+                                    </div>
+                                    <div class="mb-2">
+                                        <h6><i class="fas fa-map-marker-alt me-2 text-primary"></i>Location</h6>
+                                        <p class="ps-4 mb-0">New York, USA</p>
+                                    </div>
+                                </div>
+
+                                <button class="btn btn-primary w-100 mt-3">
+                                    <i class="fas fa-comment me-1"></i> Message Player
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Booking Details -->
+    <div class="modal fade" id="bookingModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-calendar-check me-2"></i>Booking Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <h6 class="text-uppercase text-muted mb-3">Booking Information</h6>
+                                <div class="d-flex mb-3">
+                                    <i class="fas fa-calendar-day text-primary me-3 mt-1"></i>
+                                    <div>
+                                        <small class="text-muted">Date</small>
+                                        <p class="mb-0 fw-bold">June 15, 2023</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex mb-3">
+                                    <i class="fas fa-clock text-primary me-3 mt-1"></i>
+                                    <div>
+                                        <small class="text-muted">Time Slot</small>
+                                        <p class="mb-0 fw-bold">08:00 - 10:00 (2 hours)</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex mb-3">
+                                    <i class="fas fa-map-marked-alt text-primary me-3 mt-1"></i>
+                                    <div>
+                                        <small class="text-muted">Turf</small>
+                                        <p class="mb-0 fw-bold">Turf A - Football</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex">
+                                    <i class="fas fa-info-circle text-primary me-3 mt-1"></i>
+                                    <div>
+                                        <small class="text-muted">Status</small>
+                                        <p class="mb-0">
+                                            <span class="badge badge-confirmed">
+                                                <i class="fas fa-check-circle me-1"></i> Confirmed
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <h6 class="text-uppercase text-muted mb-3">Payment Details</h6>
+                                <div class="d-flex mb-3">
+                                    <i class="fas fa-money-bill-wave text-primary me-3 mt-1"></i>
+                                    <div>
+                                        <small class="text-muted">Amount</small>
+                                        <p class="mb-0 fw-bold">$40.00</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex mb-3">
+                                    <i class="fas fa-credit-card text-primary me-3 mt-1"></i>
+                                    <div>
+                                        <small class="text-muted">Payment Method</small>
+                                        <p class="mb-0 fw-bold">Credit Card (Visa ****4242)</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex">
+                                    <i class="fas fa-receipt text-primary me-3 mt-1"></i>
+                                    <div>
+                                        <small class="text-muted">Transaction ID</small>
+                                        <p class="mb-0 fw-bold">PAY_123456789</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-4">
+                                <h6 class="text-uppercase text-muted mb-3">Player Information</h6>
+                                <div class="d-flex align-items-center mb-3">
+                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Player"
+                                        class="player-avatar me-3" width="60">
+                                    <div>
+                                        <h5 class="mb-0">John Smith</h5>
+                                        <p class="text-muted mb-0">Member since Jan 2022</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex mb-3">
+                                    <i class="fas fa-envelope text-primary me-3 mt-1"></i>
+                                    <div>
+                                        <small class="text-muted">Email</small>
+                                        <p class="mb-0 fw-bold">john@example.com</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex mb-3">
+                                    <i class="fas fa-phone text-primary me-3 mt-1"></i>
+                                    <div>
+                                        <small class="text-muted">Phone</small>
+                                        <p class="mb-0 fw-bold">+1 (555) 123-4567</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex">
+                                    <i class="fas fa-users text-primary me-3 mt-1"></i>
+                                    <div>
+                                        <small class="text-muted">Team</small>
+                                        <p class="mb-0 fw-bold">FC United (5 players)</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <h6 class="text-uppercase text-muted mb-3">Notes</h6>
+                                <textarea class="form-control mb-3" rows="3"
+                                    placeholder="Add private notes about this booking..."></textarea>
+                                <div class="d-flex">
+                                    <button class="btn btn-outline-primary me-2 flex-grow-1">
+                                        <i class="fas fa-edit me-1"></i> Edit Booking
+                                    </button>
+                                    <button class="btn btn-outline-danger">
+                                        <i class="fas fa-times me-1"></i> Cancel
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize date picker
+            flatpickr(".datepicker", {
+                dateFormat: "Y-m-d",
+                defaultDate: "today",
+                onChange: function(selectedDates, dateStr, instance) {
+                    console.log("Selected date:", dateStr);
+                }
+            });
+        });
+    </script> -->
+</body>
+
+</html>

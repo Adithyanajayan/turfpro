@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turf Registration | TurfPro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #45a049;
+            --primary-light: #e8f5e9;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --error: #e74c3c;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .register-container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            display: flex;
+        }
+
+        .register-hero {
+            flex: 1;
+            background: linear-gradient(rgba(76, 175, 80, 0.8), rgba(76, 175, 80, 0.8)),
+                url('https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .register-hero h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .register-hero ul {
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .register-hero li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .register-hero i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .register-form {
+            flex: 1.5;
+            padding: 40px;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+
+        .register-form h1 {
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .register-form p {
+            color: var(--gray);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        .time-fields, .dimension-fields, .capacity-fields {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-group input {
+            margin-right: 10px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .sport-types-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .sport-type-option {
+            display: flex;
+            align-items: center;
+        }
+
+        .sport-type-option input {
+            margin-right: 8px;
+        }
+
+        .image-preview {
+            margin-top: 10px;
+            max-width: 100%;
+            max-height: 200px;
+            display: none;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .file-input-button {
+            display: inline-block;
+            padding: 12px 15px;
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            border: 1px dashed var(--primary);
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: center;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-input-button:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        @media (max-width: 768px) {
+            .register-container {
+                flex-direction: column;
+            }
+
+            .register-hero {
+                padding: 30px 20px;
+            }
+
+            .register-form {
+                padding: 30px 20px;
+                max-height: none;
+            }
+
+            .time-fields, .dimension-fields, .capacity-fields {
+                grid-template-columns: 1fr;
+            }
+
+            .sport-types-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .alert {
+            padding: 12px 20px;
+            border-radius: 5px;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .alert-info {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        .alert i {
+            font-size: 1.2rem;
+        }
+
+    </style>
+</head>
+<body>
+     {% if messages %}
+    <div class="alert-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {% if message.tags == 'success' %}
+            <i class="fas fa-check-circle"></i>
+            {% elif message.tags == 'error' %}
+            <i class="fas fa-exclamation-circle"></i>
+            {% elif message.tags == 'warning' %}
+            <i class="fas fa-exclamation-triangle"></i>
+            {% else %}
+            <i class="fas fa-info-circle"></i>
+            {% endif %}
+            {{ message }}
+        </div>
+        {% endfor %}
+        </div>
+        <script>
+    // Wait for the DOM to be fully loaded
+    document.addEventListener("DOMContentLoaded", function () {
+        // Select all alert elements
+        const alerts = document.querySelectorAll(".alert");
+
+        // Set a timeout to hide alerts after 2 seconds
+        setTimeout(() => {
+            alerts.forEach(alert => {
+                alert.style.transition = "opacity 0.5s ease";
+                alert.style.opacity = "0";
+
+                // Optional: Remove the element from DOM after fade out
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 2000);
+    });
+</script>
+    {% endif %}
+
+    <div class="register-container">
+        <div class="register-hero">
+            <h2>List Your Turf on TurfPro</h2>
+            <p>Connect with thousands of sports enthusiasts looking to book quality turfs</p>
+
+            <ul>
+                <li><i class="fas fa-check-circle"></i> Increase your visibility</li>
+                <li><i class="fas fa-check-circle"></i> Manage bookings easily</li>
+                <li><i class="fas fa-check-circle"></i> Secure payments</li>
+                <li><i class="fas fa-check-circle"></i> 24/7 customer support</li>
+            </ul>
+        </div>
+
+        <div class="register-form">
+            <h1>Turf Registration</h1>
+            <p>Fill in your turf details to get started</p>
+
+            <form id="turfRegistrationForm" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="name">Turf Name*</label>
+                    <input type="text" id="name" name="name" class="form-control" placeholder="Enter turf name" required
+                        maxlength="20">
+                    <div id="nameError" class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location*</label>
+                    <input type="text" id="location" name="location" class="form-control"
+                        placeholder="Enter turf location" required maxlength="50">
+                    <div id="locationError" class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Price per Hour (₹)*</label>
+                    <input type="text" id="price" name="price" class="form-control" placeholder="Enter price per hour"
+                        required maxlength="5">
+                    <div id="priceError" class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Operating Hours*</label>
+                    <div class="time-fields">
+                        <div>
+                            <label for="opening_time">Opening Time</label>
+                            <input type="time" id="opening_time" name="opening_time" class="form-control" required>
+                            <div id="openingTimeError" class="error-message"></div>
+                        </div>
+                        <div>
+                            <label for="closing_time">Closing Time</label>
+                            <input type="time" id="closing_time" name="closing_time" class="form-control" required>
+                            <div id="closingTimeError" class="error-message"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Turf Dimensions (in meters)</label>
+                    <div class="dimension-fields">
+                        <div>
+                            <label for="length">Length</label>
+                            <input type="number" id="length" name="length" class="form-control" placeholder="Enter length"
+                                step="0.1" min="0">
+                            <div id="lengthError" class="error-message"></div>
+                        </div>
+                        <div>
+                            <label for="width">Width</label>
+                            <input type="number" id="width" name="width" class="form-control" placeholder="Enter width"
+                                step="0.1" min="0">
+                            <div id="widthError" class="error-message"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Player Capacity</label>
+                    <div class="capacity-fields">
+                        <div class="checkbox-group">
+                            <input type="radio" id="capacity_5" name="player_capacity" value="5">
+                            <label for="capacity_5">5's</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="radio" id="capacity_7" name="player_capacity" value="7">
+                            <label for="capacity_7">7's</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="radio" id="capacity_11" name="player_capacity" value="11">
+                            <label for="capacity_11">11's</label>
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="radio" id="capacity_none" name="player_capacity" value="" checked>
+                            <label for="capacity_none">Not specified</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Facilities</label>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="has_floodlight" name="has_floodlight">
+                        <label for="has_floodlight">Floodlights available</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="has_drinking_water" name="has_drinking_water">
+                        <label for="has_drinking_water">Drinking water available</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Sport Types Offered*</label>
+                    <div class="sport-types-container">
+                        <div class="sport-type-option">
+                            <input type="checkbox" id="sport_football" name="sport_types" value="Football">
+                            <label for="sport_football">Football</label>
+                        </div>
+                        <div class="sport-type-option">
+                            <input type="checkbox" id="sport_cricket" name="sport_types" value="Cricket">
+                            <label for="sport_cricket">Cricket</label>
+                        </div>
+                        <div class="sport-type-option">
+                            <input type="checkbox" id="sport_badminton" name="sport_types" value="Badminton">
+                            <label for="sport_badminton">Badminton</label>
+                        </div>
+                        <div class="sport-type-option">
+                            <input type="checkbox" id="sport_tennis" name="sport_types" value="Tennis">
+                            <label for="sport_tennis">Tennis</label>
+                        </div>
+                    </div>
+                    <div id="sportTypeError" class="error-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="extra_features">Extra Features</label>
+                    <textarea id="extra_features" name="extra_features" class="form-control"
+                        placeholder="Describe any other features your turf offers (changing rooms, parking, etc.)"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="image">Turf Image</label>
+                    <div class="file-input-wrapper">
+                        <button class="file-input-button">
+                            <i class="fas fa-upload"></i> Choose Image
+                        </button>
+                        <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(this)">
+                    </div>
+                    <img id="imagePreview" class="image-preview" alt="Preview">
+                    <div id="imageError" class="error-message"></div>
+                </div>
+
+                <button type="submit" class="btn">Register Turf</button>
+            </form>
+        </div>
+    </div>
+<!-- 
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('imagePreview');
+            const file = input.files[0];
+            
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(file);
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set default time values to reasonable hours (9AM to 9PM)
+            document.getElementById('opening_time').value = '09:00';
+            document.getElementById('closing_time').value = '21:00';
+            
+            // Form validation
+            document.getElementById('turfRegistrationForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                let isValid = true;
+                
+                // Reset errors
+                document.querySelectorAll('.error-message').forEach(el => {
+                    el.style.display = 'none';
+                });
+                
+                // Validate name
+                const name = document.getElementById('name').value;
+                if (name.length < 3) {
+                    document.getElementById('nameError').textContent = 'Name must be at least 3 characters';
+                    document.getElementById('nameError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate location
+                const location = document.getElementById('location').value;
+                if (location.length < 5) {
+                    document.getElementById('locationError').textContent = 'Please enter a valid location';
+                    document.getElementById('locationError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate price
+                const price = document.getElementById('price').value;
+                if (!/^\d+$/.test(price)) {
+                    document.getElementById('priceError').textContent = 'Please enter a valid price (numbers only)';
+                    document.getElementById('priceError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate times
+                const openingTime = document.getElementById('opening_time').value;
+                const closingTime = document.getElementById('closing_time').value;
+                
+                if (!openingTime) {
+                    document.getElementById('openingTimeError').textContent = 'Please select opening time';
+                    document.getElementById('openingTimeError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                if (!closingTime) {
+                    document.getElementById('closingTimeError').textContent = 'Please select closing time';
+                    document.getElementById('closingTimeError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                if (openingTime && closingTime && openingTime >= closingTime) {
+                    document.getElementById('closingTimeError').textContent = 'Closing time must be after opening time';
+                    document.getElementById('closingTimeError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate sport types
+                const sportTypes = document.querySelectorAll('input[name="sport_types"]:checked');
+                if (sportTypes.length === 0) {
+                    document.getElementById('sportTypeError').textContent = 'Please select at least one sport type';
+                    document.getElementById('sportTypeError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate dimensions if provided
+                const length = document.getElementById('length').value;
+                const width = document.getElementById('width').value;
+                
+                if (length && isNaN(length)) {
+                    document.getElementById('lengthError').textContent = 'Please enter a valid number';
+                    document.getElementById('lengthError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                if (width && isNaN(width)) {
+                    document.getElementById('widthError').textContent = 'Please enter a valid number';
+                    document.getElementById('widthError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                if (isValid) {
+                    // Form is valid - submit the form
+                    this.submit();
+                }
+            });
+        });
+    </script> -->
+</body>
+
+</html>

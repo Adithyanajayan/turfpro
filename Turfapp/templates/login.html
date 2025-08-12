@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | TurfPro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #45a049;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --error: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+        }
+
+        .login-hero {
+            flex: 1;
+            background: linear-gradient(rgba(76, 175, 80, 0.8), rgba(76, 175, 80, 0.8)), 
+                        url('https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-hero h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .login-hero p {
+            margin-bottom: 30px;
+        }
+
+        .login-hero ul {
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .login-hero li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .login-hero i {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .login-form {
+            flex: 1;
+            padding: 40px;
+        }
+
+        .login-form h1 {
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+
+        .login-form p {
+            color: var(--gray);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--gray);
+        }
+
+        .register-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-top: -15px;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            color: var(--gray);
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .forgot-password a:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+            }
+            
+            .login-hero {
+                padding: 30px 20px;
+            }
+            
+            .login-form {
+                padding: 30px 20px;
+            }
+        }
+            
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .alert {
+            padding: 12px 20px;
+            border-radius: 5px;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .alert-info {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        .alert i {
+            font-size: 1.2rem;
+        }
+
+    </style>
+</head>
+<body>
+     {% if messages %}
+    <div class="alert-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {% if message.tags == 'success' %}
+            <i class="fas fa-check-circle"></i>
+            {% elif message.tags == 'error' %}
+            <i class="fas fa-exclamation-circle"></i>
+            {% elif message.tags == 'warning' %}
+            <i class="fas fa-exclamation-triangle"></i>
+            {% else %}
+            <i class="fas fa-info-circle"></i>
+            {% endif %}
+            {{ message }}
+        </div>
+        {% endfor %}
+        </div>
+        <script>
+    // Wait for the DOM to be fully loaded
+    document.addEventListener("DOMContentLoaded", function () {
+        // Select all alert elements
+        const alerts = document.querySelectorAll(".alert");
+
+        // Set a timeout to hide alerts after 2 seconds
+        setTimeout(() => {
+            alerts.forEach(alert => {
+                alert.style.transition = "opacity 0.5s ease";
+                alert.style.opacity = "0";
+
+                // Optional: Remove the element from DOM after fade out
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 2000);
+    });
+</script>
+    {% endif %}
+
+    <div class="login-container">
+        <div class="login-hero">
+            <h2>Welcome Back to TurfPro</h2>
+            <p>Continue your sports turf booking experience</p>
+            
+            <ul>
+                <li><i class="fas fa-check-circle"></i> Manage your bookings</li>
+                <li><i class="fas fa-check-circle"></i> Access exclusive offers</li>
+                <li><i class="fas fa-check-circle"></i> Track your history</li>
+                <li><i class="fas fa-check-circle"></i> Fast checkout</li>
+            </ul>
+        </div>
+        
+        <div class="login-form">
+            <h1>Sign In to Your Account</h1>
+            <p>Enter your credentials to continue</p>
+            
+            <form id="loginForm" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" name="email" id="email" class="form-control" placeholder="Enter your email" required>
+                    <div id="emailError" class="error-message"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password" required>
+                    <div id="passwordError" class="error-message"></div>
+                </div>
+                
+                <div class="forgot-password">
+                    <a href="forgot-password.html">Forgot password?</a>
+                </div>
+                
+                <button type="submit" class="btn">Sign In</button>
+                
+                <div class="register-link">
+                    Don't have an account? <a href="{% url 'register' %}">Register now</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- <script>
+        // Form validation
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let isValid = true;
+            
+            // Reset errors
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // Validate email
+            const email = document.getElementById('email').value;
+            if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+                document.getElementById('emailError').textContent = 'Please enter a valid email';
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate password
+            const password = document.getElementById('password').value;
+            if (password.length < 8) {
+                document.getElementById('passwordError').textContent = 'Password must be at least 8 characters';
+                document.getElementById('passwordError').style.display = 'block';
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // Form is valid - proceed with login
+                const formData = {
+                    email: email,
+                    password: password
+                };
+                
+                console.log('Login data:', formData);
+                // Here you would typically send the data to your server
+                alert('Login successful! Redirecting to your dashboard...');
+                // window.location.href = 'dashboard.html';
+            }
+        });
+    </script> -->
+</body>
+</html>

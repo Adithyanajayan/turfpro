@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - TurfPro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background-color: #2e8b57;
+            color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-right: 10px;
+        }
+        
+        .auth-buttons .btn {
+            padding: 8px 20px;
+            border-radius: 5px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .login {
+            background: transparent;
+            border: 1px solid white;
+            color: white;
+        }
+        
+        .login:hover {
+            background: white;
+            color: #2e8b57;
+        }
+        
+        .signup {
+            background: white;
+            border: 1px solid white;
+            color: #2e8b57;
+        }
+        
+        /* Registration Container */
+        .registration-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 20px;
+            display: flex;
+            min-height: 70vh;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            background: white;
+        }
+        
+        .registration-image {
+            flex: 1;
+            background: url('https://images.unsplash.com/photo-1543357480-c60d400e7ef6') center/cover no-repeat;
+            display: none;
+        }
+        
+        .registration-form {
+            flex: 1;
+            padding: 3rem 2rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .form-header h2 {
+            color: #2e8b57;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-header p {
+            color: #666;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #2e8b57;
+            outline: none;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .password-container {
+            position: relative;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #777;
+        }
+        
+        /* Role Selection Styles */
+        .role-selection {
+            margin: 1.5rem 0;
+        }
+        
+        .role-options {
+            display: flex;
+            gap: 10px;
+            margin-top: 0.5rem;
+        }
+        
+        .role-option {
+            flex: 1;
+        }
+        
+        .role-option input {
+            display: none;
+        }
+        
+        .role-option label {
+            display: block;
+            padding: 10px;
+            background: #f1f1f1;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .role-option input:checked + label {
+            background: #2e8b57;
+            color: white;
+        }
+        
+        .btn-register {
+            width: 100%;
+            padding: 12px;
+            background: #2e8b57;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 1rem;
+        }
+        
+        .btn-register:hover {
+            background: #3cb371;
+        }
+        
+        .form-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666;
+        }
+        
+        .form-footer a {
+            color: #2e8b57;
+            font-weight: 500;
+        }
+        
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Error Handling */
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .form-group.error .form-control {
+            border-color: #e74c3c;
+        }
+        
+        .form-group.success .form-control {
+            border-color: #2e8b57;
+        }
+        
+        /* Terms Checkbox */
+        .terms-check {
+            display: flex;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        
+        .terms-check input {
+            margin-right: 10px;
+        }
+        
+        .terms-check label {
+            font-weight: normal;
+            color: #666;
+        }
+        
+        .terms-check a {
+            color: #2e8b57;
+        }
+        
+        /* Footer */
+        footer {
+            background: #2e8b57;
+            color: white;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        
+        .footer-section ul {
+            list-style: none;
+        }
+        
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-section ul li a {
+            color: #d4f7dc;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-section ul li a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive Design */
+        @media (min-width: 768px) {
+            .registration-image {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .role-options {
+                flex-direction: column;
+            }
+            
+            .registration-form {
+                padding: 2rem 1rem;
+            }
+        }
+           
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .alert {
+            padding: 12px 20px;
+            border-radius: 5px;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .alert-info {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        .alert i {
+            font-size: 1.2rem;
+        }
+
+    </style>
+</head>
+<body>
+     {% if messages %}
+    <div class="alert-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {% if message.tags == 'success' %}
+            <i class="fas fa-check-circle"></i>
+            {% elif message.tags == 'error' %}
+            <i class="fas fa-exclamation-circle"></i>
+            {% elif message.tags == 'warning' %}
+            <i class="fas fa-exclamation-triangle"></i>
+            {% else %}
+            <i class="fas fa-info-circle"></i>
+            {% endif %}
+            {{ message }}
+        </div>
+        {% endfor %}
+        </div>
+        <script>
+    // Wait for the DOM to be fully loaded
+    document.addEventListener("DOMContentLoaded", function () {
+        // Select all alert elements
+        const alerts = document.querySelectorAll(".alert");
+
+        // Set a timeout to hide alerts after 2 seconds
+        setTimeout(() => {
+            alerts.forEach(alert => {
+                alert.style.transition = "opacity 0.5s ease";
+                alert.style.opacity = "0";
+
+                // Optional: Remove the element from DOM after fade out
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 2000);
+    });
+</script>
+    {% endif %}
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-futbol"></i>
+            <span>TurfPro</span>
+        </div>
+        <div class="auth-buttons">
+            <a href="login.html" class="btn login">Login</a>
+            <a href="register.html" class="btn signup">Signup</a>
+        </div>
+    </nav>
+    
+    <!-- Registration Section -->
+    <div class="registration-container">
+        <div class="registration-image"></div>
+        
+        <div class="registration-form">
+            <div class="form-header">
+                <h2>Create Your Account</h2>
+                <p>Join thousands of sports enthusiasts booking turfs with us</p>
+            </div>
+            
+            <form id="registerForm" method="post" action="{% url 'register' %}">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" name="firstname" id="firstName" class="form-control" required>
+                        <div class="error-message">Please enter your first name</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" name="lastname" id="lastname" class="form-control" required>
+                        <div class="error-message">Please enter your last name</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" name="email" id="email" class="form-control" required>
+                    <div class="error-message">Please enter a valid email address</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" class="form-control" required>
+                    <div class="error-message">Please enter a valid phone number</div>
+                </div>
+                
+                <!-- Role Selection -->
+                <div class="form-group role-selection">
+                    <label>I am registering as:</label>
+                    <div class="role-options">
+                        <div class="role-option">
+                            <input type="radio" id="player" name="role" value="player" checked>
+                            <label for="player">Player</label>
+                        </div>
+                        <div class="role-option">
+                            <input type="radio" id="owner" name="role" value="owner">
+                            <label for="owner">Turf Owner</label>
+                        </div>
+                        
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="password-container">
+                        <input type="password" name="password" id="password" class="form-control" required>
+                        <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                    </div>
+                    <div class="error-message">Password must be at least 8 characters</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <div class="password-container">
+                        <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" required>
+                        <i class="fas fa-eye toggle-password" id="toggleConfirmPassword"></i>
+                    </div>
+                    <div class="error-message">Passwords do not match</div>
+                </div>
+                
+                <div class="terms-check">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                </div>
+                
+                <button type="submit" class="btn-register">Create Account</button>
+            </form>
+            
+            <div class="form-footer">
+                <p>Already have an account? <a href="{% url 'login' %}">Sign in</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>TurfPro</h3>
+                <p>Book sports turfs easily and conveniently with our platform.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#">Turfs</a></li>
+                    <li><a href="#">Sports</a></li>
+                    <li><a href="#">Pricing</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <ul>
+                    <li><i class="fas fa-phone"></i> +1 (123) 456-7890</li>
+                    <li><i class="fas fa-envelope"></i> support@turfpro.com</li>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Sports Ave, City</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2023 TurfPro. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- <script>
+        // Toggle password visibility
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const password = document.getElementById('password');
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+        
+        document.getElementById('toggleConfirmPassword').addEventListener('click', function() {
+            const confirmPassword = document.getElementById('confirmPassword');
+            const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmPassword.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+        
+        // Form validation
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let isValid = true;
+            
+            // Validate first name
+            const firstName = document.getElementById('firstName');
+            if (!firstName.value.trim()) {
+                showError(firstName, 'First name is required');
+                isValid = false;
+            } else {
+                showSuccess(firstName);
+            }
+            
+            // Validate last name
+            const lastName = document.getElementById('lastName');
+            if (!lastName.value.trim()) {
+                showError(lastName, 'Last name is required');
+                isValid = false;
+            } else {
+                showSuccess(lastName);
+            }
+            
+            // Validate email
+            const email = document.getElementById('email');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                showError(email, 'Please enter a valid email');
+                isValid = false;
+            } else {
+                showSuccess(email);
+            }
+            
+            // Validate phone
+            const phone = document.getElementById('phone');
+            const phoneRegex = /^[0-9]{10,15}$/;
+            if (!phoneRegex.test(phone.value)) {
+                showError(phone, 'Please enter a valid phone number');
+                isValid = false;
+            } else {
+                showSuccess(phone);
+            }
+            
+            // Get selected role
+            const role = document.querySelector('input[name="role"]:checked').value;
+            
+            // Validate password
+            const password = document.getElementById('password');
+            if (password.value.length < 8) {
+                showError(password, 'Password must be at least 8 characters');
+                isValid = false;
+            } else {
+                showSuccess(password);
+            }
+            
+            // Validate confirm password
+            const confirmPassword = document.getElementById('confirmPassword');
+            if (confirmPassword.value !== password.value) {
+                showError(confirmPassword, 'Passwords do not match');
+                isValid = false;
+            } else {
+                showSuccess(confirmPassword);
+            }
+            
+            // Validate terms checkbox
+            const terms = document.getElementById('terms');
+            if (!terms.checked) {
+                alert('Please accept the terms and conditions');
+                isValid = false;
+            }
+            
+            // If form is valid, submit it
+            if (isValid) {
+                // In a real application, you would send this data to your server
+                const formData = {
+                    firstName: firstName.value.trim(),
+                    lastName: lastName.value.trim(),
+                    email: email.value.trim(),
+                    phone: phone.value.trim(),
+                    role: role,
+                    password: password.value
+                };
+                
+                console.log('Form data:', formData); // For demonstration
+                
+                alert(`Registration successful as ${role}! Redirecting to login...`);
+                window.location.href = 'login.html';
+            }
+        });
+        
+        function showError(input, message) {
+            const formGroup = input.closest('.form-group');
+            formGroup.classList.add('error');
+            formGroup.classList.remove('success');
+            const errorMessage = formGroup.querySelector('.error-message');
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+        
+        function showSuccess(input) {
+            const formGroup = input.closest('.form-group');
+            formGroup.classList.remove('error');
+            formGroup.classList.add('success');
+            const errorMessage = formGroup.querySelector('.error-message');
+            errorMessage.style.display = 'none';
+        }
+    </script> -->
+</body>
+</html>

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #f8f9fc;
+            --text-color: #5a5c69;
+            --danger-color: #e74a3b;
+        }
+        
+        body {
+            background-color: #f8f9fc;
+            color: var(--text-color);
+            font-family: 'Nunito', sans-serif;
+        }
+        
+        .profile-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+        
+        .profile-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid white;
+            object-fit: cover;
+            margin-bottom: 1rem;
+        }
+        
+        .profile-body {
+            padding: 2rem;
+        }
+        
+        .profile-field {
+            display: flex;
+            margin-bottom: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .profile-field label {
+            flex: 0 0 150px;
+            font-weight: 600;
+        }
+        
+        .profile-field .value {
+            flex: 1;
+            padding: 0.5rem;
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .profile-field input, .profile-field select {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .edit-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .edit-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .action-btns {
+            display: none;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .btn-save {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-delete {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .editing .value {
+            display: none;
+        }
+        
+        .editing input, .editing select {
+            display: block;
+        }
+        
+        .editing .action-btns {
+            display: flex;
+        }
+        
+        .role-badge {
+            padding: 0.35rem 0.65rem;
+            border-radius: 50rem;
+            font-weight: 600;
+        }
+        
+        .role-player {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+        
+        .role-owner {
+            background: #fff7e6;
+            color: #fa8c16;
+        }
+        
+        .delete-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+        
+        .delete-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .delete-text h4 {
+            color: var(--danger-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .delete-text p {
+            margin-bottom: 0;
+            color: #6c757d;
+        }
+        
+        /* Modal styles */
+        .modal-confirm {		
+            color: #636363;
+            width: 400px;
+        }
+        
+        .modal-confirm .modal-content {
+            padding: 20px;
+            border-radius: 5px;
+            border: none;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        .modal-confirm .modal-header {
+            border-bottom: none;   
+            position: relative;
+        }
+        
+        .modal-confirm h4 {
+            text-align: center;
+            font-size: 26px;
+            margin: 30px 0 -10px;
+        }
+        
+        .modal-confirm .close {
+            position: absolute;
+            top: -5px;
+            right: -2px;
+        }
+        
+        .modal-confirm .modal-body {
+            color: #999;
+        }
+        
+        .modal-confirm .modal-footer {
+            border: none;
+            text-align: center;		
+            border-radius: 5px;
+            font-size: 13px;
+            padding: 10px 15px 25px;
+        }
+        
+        .modal-confirm .modal-footer a {
+            color: #999;
+        }		
+        
+        .modal-confirm .icon-box {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+            border-radius: 50%;
+            z-index: 9;
+            text-align: center;
+            border: 3px solid #f15e5e;
+        }
+        
+        .modal-confirm .icon-box i {
+            color: #f15e5e;
+            font-size: 46px;
+            display: inline-block;
+            margin-top: 13px;
+        }
+        
+        .modal-confirm .btn, .modal-confirm .btn:active {
+            color: #fff;
+            border-radius: 4px;
+            background: #60c7c1;
+            text-decoration: none;
+            transition: all 0.4s;
+            line-height: normal;
+            min-width: 120px;
+            border: none;
+            min-height: 40px;
+            border-radius: 3px;
+            margin: 0 5px;
+        }
+        
+        .modal-confirm .btn-secondary {
+            background: #c1c1c1;
+        }
+        
+        .modal-confirm .btn-secondary:hover, .modal-confirm .btn-secondary:focus {
+            background: #a8a8a8;
+        }
+        
+        .modal-confirm .btn-danger {
+            background: #f15e5e;
+        }
+        
+        .modal-confirm .btn-danger:hover, .modal-confirm .btn-danger:focus {
+            background: #ee3535;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-card">
+        <div class="profile-header">
+            <button class="edit-btn" id="editToggleBtn">
+                <i class="fas fa-pencil-alt"></i>
+            </button>
+            <img src="https://ui-avatars.com/api/?name={{ request.user.first_name }}+{{ request.user.last_name }}&background=3a5a78&color=fff" alt="Profile" class="profile-pic" id="profilePic">
+            <h2 id="fullName">{{request.user.first_name|capfirst}} {{request.user.last_name|capfirst}}</h2>
+            <div class="role-badge" id="roleBadge">{{request.user.role}}</div>
+        </div>
+        
+        <div class="profile-body">
+            <div class="profile-field">
+                <label>Username</label>
+                <div class="value" id="usernameValue">{{request.user.username}}</div>
+                <input type="text" id="usernameInput" value="{{request.user.username}}" disabled>
+            </div>
+           <form method="post"> 
+            {% csrf_token %}
+            <div class="profile-field">
+                <label>First Name</label>
+                <div class="value" id="firstNameValue">{{request.user.first_name|capfirst}}</div>
+                <input type="text" id="firstNameInput" name="first_name">
+            </div>
+            
+            <div class="profile-field">
+                <label>Last Name</label>
+                <div class="value" id="lastNameValue">{{request.user.last_name|capfirst}}</div>
+                <input type="text" id="lastNameInput" name="last_name">
+            </div>
+            
+            <div class="profile-field">
+                <label>Email</label>
+                <div class="value" id="emailValue">{{request.user.email}}</div>
+                <input type="email" id="emailInput" name="email" value="{{request.user.email}}" disabled>
+            </div>
+            
+            <div class="profile-field">
+                <label>Phone</label>
+                <div class="value" id="phoneValue">{{request.user.phone}}</div>
+                <input type="tel" id="phoneInput" name="phone">
+            </div>
+            
+            <div class="profile-field">
+                <label>Role</label>
+                <div class="value" id="roleValue">{{request.user.role}}</div>
+                <input type="text" id="roleInput" name="role" value="{{request.user.role}}" disabled>
+            </div>
+            
+            <div class="action-btns">
+                <button type="button" class="btn btn-save" id="saveBtn">Save Changes</button>
+                <button type="button" class="btn btn-cancel" id="cancelBtn">Cancel</button>
+            </div>
+            </form>
+            
+            <!-- Delete Account Section -->
+            <div class="delete-section">
+                <div class="delete-content">
+                    <div class="delete-text">
+                        <h4>Delete Account</h4>
+                        <p>Once you delete your account, there is no going back. Please be certain.</p>
+                    </div>
+                    <button type="button" class="btn btn-delete" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+                        Delete Account
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-confirm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="icon-box">
+                        <i class="fas fa-exclamation"></i>
+                    </div>
+                    <h4 class="modal-title">Are you sure?</h4>	
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Do you really want to delete your account? This process cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <form method="post" action="{% url 'delete_account' %}">
+                        {% csrf_token %}
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const editToggleBtn = document.getElementById('editToggleBtn');
+            const saveBtn = document.getElementById('saveBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const profileCard = document.querySelector('.profile-card');
+            
+            // Toggle edit mode
+            editToggleBtn.addEventListener('click', function() {
+                profileCard.classList.toggle('editing');
+            });
+            
+            // Save changes
+            saveBtn.addEventListener('click', function() {
+                // Update the displayed values with the input values
+                document.getElementById('firstNameValue').textContent = document.getElementById('firstNameInput').value;
+                document.getElementById('lastNameValue').textContent = document.getElementById('lastNameInput').value;
+                document.getElementById('emailValue').textContent = document.getElementById('emailInput').value;
+                document.getElementById('phoneValue').textContent = document.getElementById('phoneInput').value;
+                
+                // Update role
+                const roleInput = document.getElementById('roleInput');
+                const roleValue = roleInput.value;
+                document.getElementById('roleValue').textContent = roleInput.options[roleInput.selectedIndex].text;
+                
+                // Update role badge
+                const roleBadge = document.getElementById('roleBadge');
+                roleBadge.textContent = roleInput.options[roleInput.selectedIndex].text;
+                roleBadge.className = 'role-badge ' + (roleValue === 'player' ? 'role-player' : 'role-owner');
+                
+                // Update full name
+                document.getElementById('fullName').textContent = 
+                    `${document.getElementById('firstNameInput').value} ${document.getElementById('lastNameInput').value}`;
+                
+                // Update profile picture (just for demo)
+                const initials = `${document.getElementById('firstNameInput').value.charAt(0)}${document.getElementById('lastNameInput').value.charAt(0)}`;
+                document.getElementById('profilePic').src = `https://ui-avatars.com/api/?name=${initials}&background=random`;
+                
+                // Exit edit mode
+                profileCard.classList.remove('editing');
+                
+                // Submit the form
+                document.querySelector('form').submit();
+            });
+            
+            // Cancel editing
+            cancelBtn.addEventListener('click', function() {
+                // Reset inputs to current values
+                document.getElementById('firstNameInput').value = document.getElementById('firstNameValue').textContent;
+                document.getElementById('lastNameInput').value = document.getElementById('lastNameValue').textContent;
+                document.getElementById('emailInput').value = document.getElementById('emailValue').textContent;
+                document.getElementById('phoneInput').value = document.getElementById('phoneValue').textContent;
+                
+                // Exit edit mode
+                profileCard.classList.remove('editing');
+            });
+            
+            // Initialize role select to match displayed value
+            function setInitialRole() {
+                const roleText = document.getElementById('roleValue').textContent.toLowerCase();
+                const roleInput = document.getElementById('roleInput');
+                for (let i = 0; i < roleInput.options.length; i++) {
+                    if (roleInput.options[i].text.toLowerCase() === roleText) {
+                        roleInput.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+            
+            setInitialRole();
+        });
+    </script>
+</body>
+</html>

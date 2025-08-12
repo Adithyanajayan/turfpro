@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TurfPro - Book Sports Turfs Online</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #45a049;
+            --primary-light: #e8f5e9;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --error: #e74c3c;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 28px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-buttons .btn {
+            margin-left: 15px;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-light);
+        }
+
+        .btn-solid {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-solid:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                        url('https://images.unsplash.com/photo-1543357483-0670e0e5a73a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 5%;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            background: white;
+            border-radius: 50px;
+            padding: 5px;
+            display: flex;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: var(--shadow);
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 50px 0 0 50px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-box button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 0 50px 50px 0;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .search-box button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        /* Features Section */
+        .section {
+            padding: 80px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 36px;
+            color: var(--dark);
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            color: var(--gray);
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 30px;
+        }
+
+        .feature-card h3 {
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+
+        /* Turfs Section */
+        .turfs {
+            background-color: var(--primary-light);
+        }
+
+        .turf-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .turf-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+        }
+
+        .turf-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .turf-image {
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .turf-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .turf-card:hover .turf-image img {
+            transform: scale(1.1);
+        }
+
+        .turf-info {
+            padding: 20px;
+        }
+
+        .turf-info h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .turf-meta {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            color: var(--gray);
+        }
+
+        .turf-meta span {
+            display: flex;
+            align-items: center;
+            margin-right: 15px;
+        }
+
+        .turf-meta i {
+            margin-right: 5px;
+            color: var(--primary);
+        }
+
+        .turf-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            text-align: center;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            text-align: left;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .testimonial-text::before {
+            content: '"';
+            font-size: 60px;
+            color: var(--primary-light);
+            position: absolute;
+            top: -20px;
+            left: -15px;
+            z-index: -1;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 15px;
+        }
+
+        .author-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .author-info h4 {
+            margin-bottom: 5px;
+        }
+
+        .author-info p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        /* CTA Section */
+        .cta {
+            background: linear-gradient(rgba(76, 175, 80, 0.9), rgba(76, 175, 80, 0.9)), 
+                        url('https://images.unsplash.com/photo-1543357483-0670e0e5a73a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 80px 5%;
+        }
+
+        .cta h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .cta p {
+            font-size: 18px;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 60px 5% 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-column h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--primary);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        /* Mobile Menu */
+        .menu-toggle {
+            display: none;
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .nav-buttons {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 80px 5%;
+            }
+            
+            .section {
+                padding: 60px 5%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 28px;
+            }
+            
+            .search-box {
+                flex-direction: column;
+                border-radius: 10px;
+                padding: 10px;
+            }
+            
+            .search-box input {
+                border-radius: 5px;
+                margin-bottom: 10px;
+            }
+            
+            .search-box button {
+                border-radius: 5px;
+                width: 100%;
+            }
+        }
+        
+        .alert-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .alert {
+            padding: 12px 20px;
+            border-radius: 5px;
+            box-shadow: var(--shadow);
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .alert-info {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        .alert i {
+            font-size: 1.2rem;
+        }
+
+    </style>
+</head>
+<body>
+     {% if messages %}
+    <div class="alert-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {% if message.tags == 'success' %}
+            <i class="fas fa-check-circle"></i>
+            {% elif message.tags == 'error' %}
+            <i class="fas fa-exclamation-circle"></i>
+            {% elif message.tags == 'warning' %}
+            <i class="fas fa-exclamation-triangle"></i>
+            {% else %}
+            <i class="fas fa-info-circle"></i>
+            {% endif %}
+            {{ message }}
+        </div>
+        {% endfor %}
+        </div>
+        <script>
+    // Wait for the DOM to be fully loaded
+    document.addEventListener("DOMContentLoaded", function () {
+        // Select all alert elements
+        const alerts = document.querySelectorAll(".alert");
+
+        // Set a timeout to hide alerts after 2 seconds
+        setTimeout(() => {
+            alerts.forEach(alert => {
+                alert.style.transition = "opacity 0.5s ease";
+                alert.style.opacity = "0";
+
+                // Optional: Remove the element from DOM after fade out
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 2000);
+    });
+</script>
+    {% endif %}
+
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">
+                <i class="fas fa-futbol"></i>
+                TurfPro
+            </a>
+            
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'turfs' %}">Turfs</a></li>
+                <li><a href="{% url 'player_booking' %}">Bookings</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            
+            <div class="nav-buttons">
+                <a href="{% url 'logout' %}" class="btn btn-outline">Logout</a>
+                <a href="{% url 'profile' %}" class="btn btn-solid">Profile</a>
+            </div>
+            
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Book Premium Sports Turfs in Minutes</h1>
+            <p>Find and reserve the best football, cricket, and multi-sport turfs near you with our easy-to-use platform</p>
+            
+            <div class="search-box">
+                <input type="text" placeholder="Search by location, sport, or turf name...">
+                <button type="submit">Search Turfs</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section">
+        <div class="section-title">
+            <h2>Why Choose TurfPro?</h2>
+            <p>We make sports turf booking simple, fast, and reliable for players and turf owners alike</p>
+        </div>
+        
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <h3>Easy Booking</h3>
+                <p>Book your favorite turfs in just a few clicks with our intuitive booking system.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h3>Wide Selection</h3>
+                <p>Discover hundreds of quality turfs in your city with detailed information.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h3>Secure Payments</h3>
+                <p>Pay securely online with multiple payment options available.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <h3>Real-Time Availability</h3>
+                <p>See up-to-date slot availability and get instant confirmation.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <h3>Verified Reviews</h3>
+                <p>Read genuine reviews from other players before booking.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3>24/7 Support</h3>
+                <p>Our customer support team is always ready to help you.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Turfs Section -->
+    <section class="section turfs">
+        <div class="section-title">
+            <h2>Popular Turfs Near You</h2>
+            <p>Check out these highly-rated turfs that players in your area love</p>
+        </div>
+        
+        <div class="turf-grid">
+            <div class="turf-card">
+                <div class="turf-image">
+                    <img src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Football Turf">
+                </div>
+                <div class="turf-info">
+                    <h3>Elite Football Arena</h3>
+                    <div class="turf-meta">
+                        <span><i class="fas fa-map-marker-alt"></i> Downtown</span>
+                        <span><i class="fas fa-users"></i> 7v7</span>
+                    </div>
+                    <div class="turf-price">₹800/hr</div>
+                    <a href="#" class="btn btn-solid">Book Now</a>
+                </div>
+            </div>
+            
+            <div class="turf-card">
+                <div class="turf-image">
+                    <img src="https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Cricket Turf">
+                </div>
+                <div class="turf-info">
+                    <h3>Greenfield Cricket Ground</h3>
+                    <div class="turf-meta">
+                        <span><i class="fas fa-map-marker-alt"></i> Westside</span>
+                        <span><i class="fas fa-users"></i> Full Pitch</span>
+                    </div>
+                    <div class="turf-price">₹1200/hr</div>
+                    <a href="#" class="btn btn-solid">Book Now</a>
+                </div>
+            </div>
+            
+            <div class="turf-card">
+                <div class="turf-image">
+                    <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Multi-Sport Turf">
+                </div>
+                <div class="turf-info">
+                    <h3>SportsHub Multiplex</h3>
+                    <div class="turf-meta">
+                        <span><i class="fas fa-map-marker-alt"></i> East District</span>
+                        <span><i class="fas fa-users"></i> 5v5</span>
+                    </div>
+                    <div class="turf-price">₹600/hr</div>
+                    <a href="#" class="btn btn-solid">Book Now</a>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="{% url 'turfs' %}" class="btn btn-outline">View All Turfs</a>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="section testimonials">
+        <div class="section-title">
+            <h2>What Our Users Say</h2>
+            <p>Hear from sports enthusiasts who've transformed their game with TurfPro</p>
+        </div>
+        
+        <div class="testimonial-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-text">
+                    <p>TurfPro has completely changed how I book football turfs. No more calling multiple places - I can see all available slots and book instantly. The turf quality has always been excellent too!</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Rahul Sharma">
+                    </div>
+                    <div class="author-info">
+                        <h4>Rahul Sharma</h4>
+                        <p>Amateur Football Player</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-text">
+                    <p>As a turf owner, TurfPro has helped me manage bookings seamlessly and increased my visibility. The dashboard makes it easy to handle reservations and payments all in one place.</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Priya Patel">
+                    </div>
+                    <div class="author-info">
+                        <h4>Priya Patel</h4>
+                        <p>Turf Owner, Elite Arena</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-text">
+                    <p>Our cricket team uses TurfPro every week to book practice sessions. The real-time availability and instant confirmation save us so much time compared to traditional booking methods.</p>
+                </div>
+                <div class="testimonial-author">
+                    <div class="author-avatar">
+                        <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Vikram Singh">
+                    </div>
+                    <div class="author-info">
+                        <h4>Vikram Singh</h4>
+                        <p>Captain, City Cricket Club</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <h2>Ready to Play?</h2>
+        <p>Join thousands of sports enthusiasts who book their games effortlessly with TurfPro</p>
+        <div style="display: flex; gap: 15px; justify-content: center;">
+            <a href="register.html" class="btn btn-solid">Sign Up Now</a>
+            <a href="turfs.html" class="btn btn-outline" style="background-color: transparent; border-color: white; color: white;">Browse Turfs</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>TurfPro</h3>
+                <p>Your premier platform for booking sports turfs online. We connect players with quality turfs for unforgettable sporting experiences.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="{% url 'turfs' %}">Turfs</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="terms.html">Terms of Service</a></li>
+                    <li><a href="refund.html">Refund Policy</a></li>
+                    <li><a href="help.html">Help Center</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Contact Us</h3>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Sports Lane, City</li>
+                    <li><i class="fas fa-phone"></i> +91 9876543210</li>
+                    <li><i class="fas fa-envelope"></i> hello@turfpro.com</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>&copy; 2023 TurfPro. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- <script>
+        // Mobile menu toggle
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            // This would toggle a mobile menu in a real implementation
+            alert('Mobile menu would open here in a complete implementation');
+        });
+        
+        // Search functionality
+        document.querySelector('.search-box button').addEventListener('click', function() {
+            const searchQuery = document.querySelector('.search-box input').value;
+            if (searchQuery.trim() !== '') {
+                alert('Searching for: ' + searchQuery);
+                // In a real implementation, this would redirect to search results
+                // window.location.href = 'search.html?q=' + encodeURIComponent(searchQuery);
+            }
+        });
+        
+        // Allow search on Enter key
+        document.querySelector('.search-box input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.querySelector('.search-box button').click();
+            }
+        });
+    </script> -->
+</body>
+</html>

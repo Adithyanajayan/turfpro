@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Turf Listings | TurfPro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #45a049;
+            --primary-light: #e8f5e9;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --error: #e74c3c;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 28px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-buttons .btn {
+            margin-left: 15px;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-light);
+        }
+
+        .btn-solid {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-solid:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 5%;
+        }
+
+        /* Search and Filters */
+        .search-section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-header h1 {
+            font-size: 28px;
+            color: var(--dark);
+        }
+
+        .results-count {
+            color: var(--gray);
+        }
+
+        .search-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            position: relative;
+        }
+
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .filter-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 15px;
+            cursor: pointer;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .apply-filters {
+            grid-column: 1 / -1;
+            text-align: right;
+        }
+
+        /* Turf Listings */
+        .turf-list {
+            display: grid;
+            gap: 25px;
+        }
+
+        .turf-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            transition: transform 0.3s;
+        }
+
+        .turf-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .turf-image {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .turf-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .turf-card:hover .turf-image img {
+            transform: scale(1.05);
+        }
+
+        .turf-details {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .turf-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .turf-title h2 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        .turf-location {
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+        }
+
+        .turf-location i {
+            margin-right: 5px;
+            color: var(--primary);
+        }
+
+        .turf-rating {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .turf-rating i {
+            margin-right: 5px;
+        }
+
+        .turf-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .feature-badge {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .feature-badge i {
+            margin-right: 5px;
+        }
+
+        .turf-description {
+            color: var(--gray);
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .turf-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .turf-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .turf-price span {
+            font-size: 14px;
+            font-weight: normal;
+            color: var(--gray);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .pagination a {
+            color: var(--dark);
+            padding: 8px 16px;
+            text-decoration: none;
+            border: 1px solid #ddd;
+            margin: 0 4px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .pagination a.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 60px 5% 30px;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-column h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 2px;
+            background-color: var(--primary);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 10px;
+        }
+
+        .footer-column a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-column a:hover {
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .turf-card {
+                grid-template-columns: 1fr;
+            }
+
+            .turf-image {
+                height: 250px;
+            }
+
+            .search-filters {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .search-filters {
+                grid-template-columns: 1fr;
+            }
+
+            .search-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .turf-features {
+                gap: 10px;
+            }
+
+            .turf-footer {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">
+                <i class="fas fa-futbol"></i>
+                TurfPro
+            </a>
+
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'turfs' %}" class="active">Turfs</a></li>
+                <li><a href="{% url 'player_booking' %}">My Bookings</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+
+            <div class="nav-buttons">
+                <a href="{% url 'logout' %}" class="btn btn-outline">Logout</a>
+                <a href="register.html" class="btn btn-solid">Register</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Search and Filters -->
+        <section class="search-section">
+            <div class="search-header">
+                <h1>Find Your Perfect Turf</h1>
+                <div class="results-count">24 Turfs Found</div>
+            </div>
+
+            <div class="search-filters">
+                <div class="filter-group search-box">
+                    <label for="search">Search</label>
+                    <input type="text" id="search" placeholder="Search by turf name, location...">
+                    <i class="fas fa-search"></i>
+                </div>
+
+                <div class="filter-group">
+                    <label for="sport">Sport</label>
+                    <select id="sport" class="filter-control">
+                        <option value="">All Sports</option>
+                        <option value="football">Football</option>
+                        <option value="cricket">Cricket</option>
+                        <option value="badminton">Badminton</option>
+                        <option value="tennis">Tennis</option>
+                        <option value="multi">Multi-Sport</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="location">Location</label>
+                    <select id="location" class="filter-control">
+                        <option value="">All Locations</option>
+                        <option value="north">North City</option>
+                        <option value="south">South City</option>
+                        <option value="east">East District</option>
+                        <option value="west">Westside</option>
+                        <option value="central">Central</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="sort">Sort By</label>
+                    <select id="sort" class="filter-control">
+                        <option value="popular">Most Popular</option>
+                        <option value="rating">Highest Rated</option>
+                        <option value="price_low">Price: Low to High</option>
+                        <option value="price_high">Price: High to Low</option>
+                        <option value="newest">Newest First</option>
+                    </select>
+                </div>
+
+                <div class="apply-filters">
+                    <button class="btn btn-solid">Apply Filters</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Turf Listings -->
+        
+        <section class="turf-list">
+            {% for turf in turfs %}
+            <div class="turf-card">
+                <div class="turf-image">
+                    {% if turf.image %}
+                    <img src="{{ turf.image.url }}" alt="{{ turf.name }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/300x200?text=No+Image" alt="No image available">
+                    {% endif %}
+                </div>
+                <div class="turf-details">
+                    <div class="turf-header">
+                        <div class="turf-title">
+                            <h2>{{ turf.name }}</h2>
+                            <div class="turf-location">
+                                <i class="fas fa-map-marker-alt"></i> {{ turf.location }}
+                            </div>
+                        </div>
+                        <div class="turf-price">
+                            ₹{{ turf.price }} <span>/ hour</span>
+                        </div>
+                    </div>
+
+                    <div class="turf-features">
+                        {% for sport_type in turf.sport_types.all %}
+                        <div class="feature-badge">
+                            <i class="fas fa-futbol"></i> {{ sport_type.name }}
+                        </div>
+                        {% endfor %}
+
+                        {% if turf.player_capacity %}
+                        <div class="feature-badge">
+                            <i class="fas fa-users"></i> {{ turf.get_player_capacity_display }}
+                        </div>
+                        {% endif %}
+
+                        {% if turf.opening_time and turf.closing_time %}
+                        <div class="feature-badge">
+                            <i class="fas fa-clock"></i> {{ turf.opening_time|time:"g:i A" }} - {{turf.closing_time|time:"g:i A" }}
+                        </div>
+                        {% endif %}
+
+                        {% if turf.length and turf.width %}
+                        <div class="feature-badge">
+                            <i class="fas fa-ruler-combined"></i> {{ turf.length }}m × {{ turf.width }}m
+                        </div>
+                        {% endif %}
+
+                        {% if turf.has_floodlight %}
+                        <div class="feature-badge">
+                            <i class="fas fa-lightbulb"></i> Floodlights
+                        </div>
+                        {% endif %}
+
+                        {% if turf.has_drinking_water %}
+                        <div class="feature-badge">
+                            <i class="fas fa-tint"></i> Drinking Water
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% if turf.extra_features %}
+                    <div class="turf-description">
+                        {{ turf.extra_features }}
+                    </div>
+                    {% endif %}
+
+                    <div class="turf-footer">
+                        <a href="{% url 'turf_booking' turf.id %}" class="btn btn-solid">Book Now</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </section>
+        <!-- Pagination -->
+        <div class="pagination">
+            <a href="#">&laquo;</a>
+            <a href="#" class="active">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">4</a>
+            <a href="#">5</a>
+            <a href="#">&raquo;</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>TurfPro</h3>
+                <p>Your premier platform for booking sports turfs online. We connect players with quality turfs for
+                    unforgettable sporting experiences.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="turfs.html">Turfs</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="faq.html">FAQ</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="terms.html">Terms of Service</a></li>
+                    <li><a href="refund.html">Refund Policy</a></li>
+                    <li><a href="help.html">Help Center</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Contact Us</h3>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Sports Lane, City</li>
+                    <li><i class="fas fa-phone"></i> +91 9876543210</li>
+                    <li><i class="fas fa-envelope"></i> hello@turfpro.com</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="copyright">
+            <p>&copy; 2023 TurfPro. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- <script>
+        // Search and Filter Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search');
+            const sportFilter = document.getElementById('sport');
+            const locationFilter = document.getElementById('location');
+            const sortFilter = document.getElementById('sort');
+            const applyBtn = document.querySelector('.apply-filters .btn');
+            const turfCards = document.querySelectorAll('.turf-card');
+            const resultsCount = document.querySelector('.results-count');
+            
+            // Apply filters function
+            function applyFilters() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedSport = sportFilter.value;
+                const selectedLocation = locationFilter.value;
+                const selectedSort = sortFilter.value;
+                
+                let visibleCount = 0;
+                
+                turfCards.forEach(card => {
+                    const title = card.querySelector('.turf-title h2').textContent.toLowerCase();
+                    const sport = card.querySelector('.feature-badge:nth-child(1)').textContent.toLowerCase();
+                    const location = card.querySelector('.turf-location').textContent.toLowerCase();
+                    
+                    // Check search term
+                    const matchesSearch = title.includes(searchTerm) || 
+                                        card.querySelector('.turf-description').textContent.toLowerCase().includes(searchTerm);
+                    
+                    // Check sport filter
+                    const matchesSport = !selectedSport || sport.includes(selectedSport);
+                    
+                    // Check location filter
+                    const matchesLocation = !selectedLocation || location.includes(selectedLocation);
+                    
+                    // Show/hide card based on filters
+                    if (matchesSearch && matchesSport && matchesLocation) {
+                        card.style.display = 'grid';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // Update results count
+                resultsCount.textContent = `${visibleCount} Turfs Found`;
+                
+                // Sort results
+                sortTurfs(selectedSort);
+            }
+            
+            // Sort turfs function
+            function sortTurfs(sortMethod) {
+                const container = document.querySelector('.turf-list');
+                const cards = Array.from(document.querySelectorAll('.turf-card[style="display: grid;"]'));
+                
+                cards.sort((a, b) => {
+                    switch(sortMethod) {
+                        case 'rating':
+                            const ratingA = parseFloat(a.querySelector('.turf-rating').textContent);
+                            const ratingB = parseFloat(b.querySelector('.turf-rating').textContent);
+                            return ratingB - ratingA;
+                            
+                        case 'price_low':
+                            const priceA = parseInt(a.querySelector('.turf-price').textContent.replace(/[^0-9]/g, ''));
+                            const priceB = parseInt(b.querySelector('.turf-price').textContent.replace(/[^0-9]/g, ''));
+                            return priceA - priceB;
+                            
+                        case 'price_high':
+                            const priceHighA = parseInt(a.querySelector('.turf-price').textContent.replace(/[^0-9]/g, ''));
+                            const priceHighB = parseInt(b.querySelector('.turf-price').textContent.replace(/[^0-9]/g, ''));
+                            return priceHighB - priceHighA;
+                            
+                        default:
+                            return 0; // Default is already sorted by popularity in HTML
+                    }
+                });
+                
+                // Re-append sorted cards
+                cards.forEach(card => {
+                    container.appendChild(card);
+                });
+            }
+            
+            // Event listeners
+            applyBtn.addEventListener('click', applyFilters);
+            
+            // Search on Enter key
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    applyFilters();
+                }
+            });
+            
+            // Initialize with all turfs visible
+            applyFilters();
+        });
+    </script> -->
+</body>
+
+</html>
