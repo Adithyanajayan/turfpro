@@ -36,7 +36,6 @@ urlpatterns = [
     path("player_booking/",views.Booking_history,name='player_booking'),
     path("owner_turfs/",views.Owner_turf,name='owner_turfs'),
     path("confirm_booking/<int:booking_id>",views.confirm_booking,name='confirm_booking'),
-    path("decline_booking/<int:booking_id>",views.decline_booking,name='decline_booking'),
     path("delete_account/",views.delete_account,name='delete_account'),
     path("delete_turf/<int:turf_id>",views.delete_turf,name='delete_turf'),
     path("turf_management/<int:turf_id>",views.manage_turf,name='manage_turf'),

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -253,6 +254,7 @@
                 transform: translateX(100%);
                 opacity: 0;
             }
+
             to {
                 transform: translateX(0);
                 opacity: 1;
@@ -275,10 +277,48 @@
             }
         }
 
-        @media (max-width: 576px) {
-            .slots-grid {
-                grid-template-columns: 1fr;
-            }
+        .slot-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .slot-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 70px;
+            border-radius: 10px;
+            font-weight: bold;
+            transition: transform 0.2s ease, background-color 0.3s ease;
+        }
+
+        .slot-card .time {
+            font-size: 14px;
+        }
+
+        .slot-card .status {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* Available */
+        .slot-card.available {
+            background-color: #e0f7e9;
+            color: #28a745;
+        }
+
+        .slot-card.available:hover {
+            transform: scale(1.05);
+        }
+
+        /* Booked */
+        .slot-card.booked {
+            background-color: #ff4d4d;
+            color: white;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -302,23 +342,23 @@
         {% endfor %}
     </div>
     <script>
-    // Wait for the DOM to be fully loaded
-    document.addEventListener("DOMContentLoaded", function () {
-        // Select all alert elements
-        const alerts = document.querySelectorAll(".alert");
+        // Wait for the DOM to be fully loaded
+        document.addEventListener("DOMContentLoaded", function () {
+            // Select all alert elements
+            const alerts = document.querySelectorAll(".alert");
 
-        // Set a timeout to hide alerts after 2 seconds
-        setTimeout(() => {
-            alerts.forEach(alert => {
-                alert.style.transition = "opacity 0.5s ease";
-                alert.style.opacity = "0";
+            // Set a timeout to hide alerts after 2 seconds
+            setTimeout(() => {
+                alerts.forEach(alert => {
+                    alert.style.transition = "opacity 0.5s ease";
+                    alert.style.opacity = "0";
 
-                // Optional: Remove the element from DOM after fade out
-                setTimeout(() => alert.remove(), 500);
-            });
-        }, 2000);
-    });
-</script>
+                    // Optional: Remove the element from DOM after fade out
+                    setTimeout(() => alert.remove(), 500);
+                });
+            }, 2000);
+        });
+    </script>
     {% endif %}
 
     <div class="container">
@@ -349,60 +389,66 @@
                     <span id="errorText">Error message will appear here</span>
                 </div>
 
+                <form method="get" id="dateForm">
+                    <input type="hidden" name="turf" value="{{ turf.id }}">
+                    <label for="date">Booking Date</label>
+                    <input type="date" id="date" name="date" required min="{% now 'Y-m-d' %}"
+                        value="{{ selected_date }}" onchange="document.getElementById('dateForm').submit();">
+                </form>
+
+
                 <form method="post">
                     {% csrf_token %}
                     <input type="hidden" name="turf" value="{{ turf.id }}">
+                    <input type="hidden" name="date" value="{{ selected_date }}">
 
-                    <!-- Date Selection -->
                     <div class="form-group">
-                        <label for="date">Booking Date</label>
-                        <input type="date" id="date" name="date" required 
-                               min="{% now 'Y-m-d' %}" 
-                               value="{% now 'Y-m-d' %}">
+                        <label for="start_time">Start Time</label>
+                        <input type="time" id="start_time" name="start_time" min="{{ turf.opening_time|time:'H:i' }}"
+                            max="{{ turf.closing_time|time:'H:i' }}" required>
                     </div>
 
-                    <!-- Time Selection -->
                     <div class="form-group">
-                        <label>Time Slot</label>
-                        <div class="time-inputs">
-                            <div>
-                                <label for="start_time">Start Time</label>
-                                <input type="time" id="start_time" name="start_time" 
-                                       min="{{ turf.opening_time|time:'H:i' }}" 
-                                       max="{{ turf.closing_time|time:'H:i' }}" 
-                                       required>
-                            </div>
-                            <div>
-                                <label for="end_time">End Time</label>
-                                <input type="time" id="end_time" name="end_time" 
-                                       min="{{ turf.opening_time|time:'H:i' }}" 
-                                       max="{{ turf.closing_time|time:'H:i' }}" 
-                                       required>
-                            </div>
-                        </div>
+                        <label for="end_time">End Time</label>
+                        <input type="time" id="end_time" name="end_time" min="{{ turf.opening_time|time:'H:i' }}"
+                            max="{{ turf.closing_time|time:'H:i' }}" required>
                     </div>
 
                     <button type="submit" name="custom_booking">
                         <i class="fas fa-calendar-check"></i> Book Now
                     </button>
                 </form>
+
             </div>
 
             <!-- Available Slots Section -->
             <div class="booking-card available-slots">
                 <h2>Available Time Slots</h2>
-                <p>Select a date to see available slots</p>
 
-                <div id="dateDisplay" style="margin-bottom: 1rem; font-weight: 600;"></div>
+                <div class="slot-row">
+                    {% for slot in slots %}
+                    <div class="slot-card {% if slot.status == 'booked' %}booked{% else %}available{% endif %}">
+                        <span class="time">{{ slot.start }}</span>
+                        <span class="status">
+                            {% if slot.status == 'booked' %}Booked{% else %}Available{% endif %}
+                        </span>
+                    </div>
+                    {% empty %}
+                     <p>Please select a date to see available slots.</p> 
+                    {% endfor %}
+                </div>
 
-                <div class="slots-grid" id="slotsContainer">
+                <!-- <div id="dateDisplay" style="margin-bottom: 1rem; font-weight: 600;"></div>
+
+                <div class="slots-grid" id="slotsContainer"> -->
                     <!-- Slots will be populated by JavaScript -->
-                    <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
-                        <i class="far fa-calendar-alt" style="font-size: 3rem; color: var(--gray); margin-bottom: 1rem;"></i>
+                    <!--<div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                        <i class="far fa-calendar-alt"
+                            style="font-size: 3rem; color: var(--gray); margin-bottom: 1rem;"></i>
                         <h3>Select a date to view available slots</h3>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 
@@ -525,4 +571,5 @@
         });
     </script> -->
 </body>
+
 </html>

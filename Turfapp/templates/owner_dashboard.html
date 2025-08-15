@@ -377,7 +377,7 @@
                         <div class="card dashboard-card stat-card">
                             <div class="card-body">
                                 <h6 class="text-muted">Today's Bookings</h6>
-                                <h3 class="mb-0">8</h3>
+                                <h3 class="mb-0">{{no_booking}}</h3>
                                 <small class="text-success">
                                     <i class="fas fa-arrow-up me-1"></i> 2 from yesterday
                                 </small>
@@ -388,7 +388,7 @@
                         <div class="card dashboard-card stat-card">
                             <div class="card-body">
                                 <h6 class="text-muted">Weekly Revenue</h6>
-                                <h3 class="mb-0">$1,240</h3>
+                                <h3 class="mb-0">{{revenue}}</h3>
                                 <small class="text-success">
                                     <i class="fas fa-arrow-up me-1"></i> 15% increase
                                 </small>
@@ -410,9 +410,9 @@
                         <div class="card dashboard-card stat-card">
                             <div class="card-body">
                                 <h6 class="text-muted">Cancellations</h6>
-                                <h3 class="mb-0">3</h3>
+                                <h3 class="mb-0">{{no_cancelled}}</h3>
                                 <small class="text-danger">
-                                    <i class="fas fa-exclamation-circle me-1"></i> 2 this week
+                                    <i class="fas fa-exclamation-circle me-1"></i>{{no_cancelled}}
                                 </small>
                             </div>
                         </div>
@@ -483,14 +483,7 @@
                                             </form>
 
                                             <!-- Decline Button -->
-                                            <form method="post" action="{% url 'decline_booking' booking.id %}"
-                                                style="display: inline;">
-                                                {% csrf_token %}
-                                                <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                    title="Decline">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-                                            </form>
+                                           
                                         </td>
 
                                     </tr>
@@ -561,14 +554,7 @@
                                             </form>
 
                                             <!-- Decline Button -->
-                                            <form method="post" action="{% url 'decline_booking' booking.id %}"
-                                                style="display: inline;">
-                                                {% csrf_token %}
-                                                <button type="submit" class="btn btn-sm btn-outline-danger"
-                                                    title="Decline">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
-                                            </form>
+                                           
                                         </td>
 
                                     </tr>

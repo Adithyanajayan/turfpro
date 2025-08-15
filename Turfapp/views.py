@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from datetime import datetime,date
+from datetime import datetime,date,timedelta
+from django.utils import timezone
 
 def Landing(request):
     return render(request,"landing.html")
@@ -151,59 +152,101 @@ def Profile(request):
     messages.success(request, "operartion unsuccessfull")
     return render(request,"profile.html")
 
+from datetime import datetime, timedelta, date
+from django.contrib import messages
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Turf_details, Booking
 
 @login_required
-def Turf_booking(request,id):
-    turf=Turf_details.objects.get(id=id)
-    user_id = request.user
+def Turf_booking(request, id):
+    turf = get_object_or_404(Turf_details, id=id)
+    user = request.user
+    slots = []
+    selected_date = request.GET.get("date", date.today().strftime("%Y-%m-%d"))
+
+    # Generate hourly slots based on turf opening & closing times
+    start_time = datetime.combine(date.today(), turf.opening_time)
+    end_time = datetime.combine(date.today(), turf.closing_time)
+    bookings = Booking.objects.filter(turf=turf, date=selected_date)
+
+    current_time = datetime.now()
+
+    while start_time < end_time:
+        slot_start = start_time.time()
+        slot_end = (start_time + timedelta(hours=1)).time()
+
+        # Check if booked
+        booked = bookings.filter(
+            start_time__lt=slot_end, end_time__gt=slot_start
+        ).exists()
+
+        # Check if slot is in the past (for today)
+        past = (selected_date == date.today().strftime("%Y-%m-%d") and
+                datetime.combine(date.today(), slot_start) < current_time)
+
+        slots.append({
+            "start": slot_start.strftime("%I:%M %p"),
+            "end": slot_end.strftime("%I:%M %p"),
+            "status": "booked" if booked else ("past" if past else "available")
+        })
+
+        start_time += timedelta(hours=1)
+
+    # Handle booking submission
     if request.method == "POST":
-        turf_id = request.POST.get("turf")
         booking_date = request.POST.get("date")
-        start_time = request.POST.get("start_time")
-        end_time = request.POST.get("end_time")
-        bookings = Booking.objects.filter(turf=turf_id,date=booking_date)
-        start_time_t = datetime.strptime(start_time, "%H:%M")
-        end_time_t = datetime.strptime(end_time, "%H:%M")
-        
-        now = datetime.now()
-        current_time = datetime.strptime(now.strftime("%H:%M"), "%H:%M")
-        
-        today = date.today()
-        booking_date_time = datetime.strptime(booking_date, "%Y-%m-%d").date()
-        if booking_date_time < today:
+        start_time_str = request.POST.get("start_time")
+        end_time_str = request.POST.get("end_time")
+
+        start_time_t = datetime.strptime(start_time_str, "%H:%M").time()
+        end_time_t = datetime.strptime(end_time_str, "%H:%M").time()
+
+        # Date validation
+        booking_date_obj = datetime.strptime(booking_date, "%Y-%m-%d").date()
+        if booking_date_obj < date.today():
             messages.error(request, "Cannot book in the past.")
-            return render(request,"turf_booking.html")
-        if booking_date_time == today:
-            if start_time_t < current_time:
-                messages.error(request, "Start time is in the past.")
-                return render(request,"turf_booking.html")
-                
+            return redirect(request.path + f"?date={booking_date}")
 
-        duration = (end_time_t-start_time_t).total_seconds()/60
-        if duration < 60 or duration%60 != 0:
-            messages.error(request, "Booking duration must be at least 1 hour and in whole hours.")
-            return render(request,"turf_booking.html",{"turf": turf})
-        
-        for booking in bookings:
-            if start_time_t.time()<turf.opening_time or end_time_t.time()>turf.closing_time:
-                messages.error(request, "Booking is outside turf operating hours.")
-                return render(request,"turf_booking.html",{"turf": turf})
-            
-            if start_time_t.time() < booking.end_time and end_time_t.time() > booking.start_time:
-                 messages.error(request, "Time slot overlaps with an existing booking.")
-                 return render(request,"turf_booking.html",{"turf": turf})
-        Booking.objects.create(user=user_id,turf=turf,start_time=start_time,date=booking_date,end_time=end_time,)
+        # Time validation
+        if booking_date_obj == date.today() and datetime.combine(date.today(), start_time_t) < current_time:
+            messages.error(request, "Start time is in the past.")
+            return redirect(request.path + f"?date={booking_date}")
+
+        # Duration validation
+        duration = (datetime.combine(date.today(), end_time_t) -
+                    datetime.combine(date.today(), start_time_t)).total_seconds() / 60
+        if duration < 60 or duration % 60 != 0:
+            messages.error(request, "Booking must be at least 1 hour and in whole hours.")
+            return redirect(request.path + f"?date={booking_date}")
+
+        # Overlap check
+        if bookings.filter(start_time__lt=end_time_t, end_time__gt=start_time_t).exists():
+            messages.error(request, "Time slot overlaps with an existing booking.")
+            return redirect(request.path + f"?date={booking_date}")
+
+        # Create booking
+        Booking.objects.create(
+            user=user,
+            turf=turf,
+            start_time=start_time_t,
+            end_time=end_time_t,
+            date=booking_date_obj
+        )
         messages.success(request, "Booking successful!")
-        return redirect('home')
-                
-    messages.success(request, "Turf booking unsuccessfull!")
-    return render(request,"turf_booking.html",{'turf':turf})
+        return redirect(request.path + f"?date={booking_date}")
 
+    return render(request,"turf_booking.html", {
+        "turf": turf,
+        "slots": slots,
+        "selected_date": selected_date
+    })
         
 @login_required
 def Owner_dashboard(request):
     today = date.today()
     turfs = Turf_details.objects.filter(owner_id=request.user.id)
+
     try:
         booking_today = Booking.objects.filter(turf_id__in=turfs, date=today)
         upcoming_booking = Booking.objects.filter(turf_id__in=turfs, date__gt=today)
@@ -212,8 +255,14 @@ def Owner_dashboard(request):
         booking_today = None
     
 
+    revenue = weekly_revenue(request.user)
+    bookings = Booking.objects.filter(turf__in=turfs)
+    no_booking = bookings.count()
+    cancelled = Cancelled_booking.objects.filter(turf__in = turfs)
+    no_cancelled = cancelled.count()
+
         
-    return render(request,"owner_dashboard.html",{'booking_today':booking_today,'upcoming_booking':upcoming_booking})
+    return render(request,"owner_dashboard.html",{'booking_today':booking_today,'upcoming_booking':upcoming_booking,"revenue":revenue,'no_booking':no_booking,'no_cancelled':no_cancelled})
 @login_required
 def Booking_history(request):
     user_id = request.user.id
@@ -224,7 +273,12 @@ def Booking_history(request):
 @login_required
 def Owner_turf(request):
     turfs = Turf_details.objects.filter(owner_id=request.user.id)
-    return render(request,"owner_turfs.html",{'turfs':turfs})
+    number_turf = turfs.count()
+    revenue = weekly_revenue(request.user)
+    bookings = Booking.objects.filter(turf__in=turfs)
+    no_booking = bookings.count()
+    
+    return render(request,"owner_turfs.html",{'turfs':turfs,'revenue':revenue,'number_turf':number_turf,'no_booking':no_booking})
 
 
     
@@ -239,14 +293,7 @@ def confirm_booking(request, booking_id):
     
     return redirect(request.META.get('HTTP_REFERER', 'owner_dashboard'))
 
-@login_required
-def decline_booking(request, booking_id):
-    if request.method == "POST":
-        booking = get_object_or_404(Booking, id=booking_id)
-        booking.status = 'declined' 
-        booking.save() # Or set a declined status if you prefer
-        messages.error(request, "Booking declined and removed.")
-    return redirect(request.META.get('HTTP_REFERER', 'owner_dashboard'))
+
 
 @login_required
 def delete_account(request):
@@ -332,4 +379,10 @@ def Cancel_booking(request,booking_id):
     Cancelled_booking.objects.create(user=booking.user,turf=booking.turf,start_time=booking.start_time,date=booking.date,end_time=booking.end_time,cancelled_at=datetime.now())  
     booking.delete()
     return redirect('player_booking')  
-
+def weekly_revenue(user):
+    turfs = Turf_details.objects.filter(owner_id=user.id)
+    seven_days_ago = timezone.now() - timedelta(days=7)
+    bookings = Booking.objects.filter(turf__in =turfs,status='confirmed',date__gte=seven_days_ago.date())
+    revenue=0
+    revenue = sum(booking.total_price for booking in bookings)
+    return revenue
