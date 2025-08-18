@@ -51,10 +51,14 @@ def Register(request):
                 login(request, user)
                 messages.success(request, "Login successful")
                 return redirect('home')
-            else:
+            elif user.role == "admin":
                 login(request, user)
                 messages.success(request, "Login successful")
-                return redirect('turfreg')
+                return redirect('admin_dashboard')
+            else :
+                login(request, user)
+                messages.success(request, "Login successful")
+                return redirect('turf_reg')
 
     return render(request, 'register.html')
 
@@ -72,6 +76,11 @@ def Login(request):
                 login(request, user)
                 messages.success(request, "Login successful")
                 return redirect('home')
+            elif user.role == "admin":
+                login(request, user)
+                messages.success(request, "Login successful")
+                return redirect('admin_dashboard')
+
             else:
                 login(request, user)
                 messages.success(request, "Login successful")
@@ -212,6 +221,10 @@ def Turf_booking(request, id):
         if booking_date_obj == date.today() and datetime.combine(date.today(), start_time_t) < current_time:
             messages.error(request, "Start time is in the past.")
             return redirect(request.path + f"?date={booking_date}")
+        if start_time_t.minute != 0 or end_time_t.minute != 0:
+            messages.error(request,"the start or end time isn't whole")
+            return redirect(request.path + f"?date={booking_date}")
+        
 
         # Duration validation
         duration = (datetime.combine(date.today(), end_time_t) -
@@ -386,3 +399,31 @@ def weekly_revenue(user):
     revenue=0
     revenue = sum(booking.total_price for booking in bookings)
     return revenue
+
+def approved(request,turf_id):
+    if request.method == 'POST':
+        turf = Turf_details.objects.get(id = turf_id)
+        turf.is_approved = 'True'
+        turf.save()
+        messages.success(request,"turf approved successfully")
+    return redirect(request.META.get('HTTP_REFERER', 'admin_turfmanagement'))
+
+def disapproved(request,turf_id):
+    if request.method == 'POST':
+        turf = Turf_details.objects.get(id = turf_id)
+        turf.delete()
+        messages.success(request,"turf disapproved successfully")
+    return redirect(request.META.get('HTTP_REFERER', 'admin_turfmanagement'))
+@login_required
+def admin_dashboard(request):
+    turfs = Turf_details.objects.all()
+    return render(request,"admin_dashboard.html",{'turfs':turfs})
+
+@login_required
+def admin_turfmanagement(request):
+    pending_turfs = Turf_details.objects.filter(is_approved=False)
+    approved_turfs = Turf_details.objects.filter(is_approved=True)
+    return render(request,"admin_turfmanagement.html",{'pending_turfs':pending_turfs,'approved_turfs':approved_turfs})
+
+    
+

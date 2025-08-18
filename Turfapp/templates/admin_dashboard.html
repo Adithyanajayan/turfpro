@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TurfVision Pro | Management Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --primary-dark: #5649c0;
+            --secondary: #00cec9;
+            --accent: #fd79a8;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #d63031;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --card-bg: #1e272e;
+            --body-bg: #0f1519;
+        }
+        
+        body {
+            background-color: var(--body-bg);
+            color: var(--light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+        
+        /* Glassmorphism Effect */
+        .glass-card {
+            background: rgba(30, 39, 46, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Neon Glow Effect */
+        .glow-primary {
+            text-shadow: 0 0 10px rgba(108, 92, 231, 0.7);
+        }
+        
+        .glow-secondary {
+            text-shadow: 0 0 10px rgba(0, 206, 201, 0.7);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: rgba(21, 27, 31, 0.9);
+            height: 100vh;
+            position: fixed;
+            width: 280px;
+            padding: 20px 0;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: 1000;
+        }
+        
+        .sidebar-brand {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 20px;
+        }
+        
+        .sidebar-brand img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            margin: 5px 15px;
+            padding: 12px 15px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: rgba(108, 92, 231, 0.2);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .nav-link.active {
+            border-left: 3px solid var(--primary);
+        }
+        
+        .nav-link i {
+            margin-right: 12px;
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            background: rgba(108, 92, 231, 0.1);
+            padding: 8px 15px;
+            border-radius: 50px;
+            border: 1px solid rgba(108, 92, 231, 0.2);
+        }
+        
+        .user-profile img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+        }
+        
+        /* Stats Cards */
+        .stat-card {
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1));
+            transform: translate(30%, -30%);
+            border-radius: 50%;
+        }
+        
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+        
+        .stat-card h3 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card p {
+            opacity: 0.8;
+            margin-bottom: 0;
+        }
+        
+        .stat-card.bookings {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        }
+        
+        .stat-card.turfs {
+            background: linear-gradient(135deg, var(--secondary), #00a8a8);
+        }
+        
+        .stat-card.revenue {
+            background: linear-gradient(135deg, #f368e0, #d252b1);
+        }
+        
+        .stat-card.players {
+            background: linear-gradient(135deg, var(--warning), #e6b143);
+        }
+        
+        /* Tabs */
+        .custom-tabs .nav-link {
+            background: none;
+            color: rgba(255, 255, 255, 0.6);
+            border: none;
+            border-radius: 0;
+            padding: 12px 20px;
+            margin: 0;
+            position: relative;
+        }
+        
+        .custom-tabs .nav-link.active {
+            color: var(--primary);
+            background: none;
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        /* Table */
+        .custom-table {
+            color: var(--light);
+        }
+        
+        .custom-table thead th {
+            background: rgba(108, 92, 231, 0.2);
+            border-bottom: none;
+            padding: 15px;
+            font-weight: 500;
+        }
+        
+        .custom-table tbody tr {
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.3s ease;
+        }
+        
+        .custom-table tbody tr:hover {
+            background: rgba(108, 92, 231, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .custom-table td {
+            padding: 15px;
+            vertical-align: middle;
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Badges */
+        .badge {
+            padding: 6px 12px;
+            font-weight: 500;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+        
+        .badge-primary {
+            background-color: var(--primary);
+        }
+        
+        .badge-success {
+            background-color: var(--success);
+        }
+        
+        .badge-warning {
+            background-color: var(--warning);
+            color: var(--dark);
+        }
+        
+        .badge-danger {
+            background-color: var(--danger);
+        }
+        
+        /* Buttons */
+        .btn {
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
+        }
+        
+        .btn-outline-primary {
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            background: transparent;
+        }
+        
+        .btn-outline-primary:hover {
+            background: rgba(108, 92, 231, 0.1);
+        }
+        
+        /* Player Card */
+        .player-card {
+            background: rgba(30, 39, 46, 0.6);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .player-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .player-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        /* Turf Card */
+        .turf-card {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            height: 200px;
+            transition: all 0.3s ease;
+        }
+        
+        .turf-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .turf-card:hover img {
+            transform: scale(1.1);
+        }
+        
+        .turf-card-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            padding: 15px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .menu-toggle {
+                display: block !important;
+            }
+        }
+        
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fade {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-brand d-flex align-items-center">
+            <img src="https://via.placeholder.com/40x40" alt="Logo">
+            <h4 class="mb-0 glow-primary">TurfVision</h4>
+        </div>
+        
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="{% url 'admin_dashboard' %}">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'admin_turfmanagement' %}">
+                    <i class="fas fa-map-marked-alt"></i> Turf Management
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-users"></i> User Management
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-user-friends"></i> Player Analytics
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-calendar-check"></i> Booking System
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-chart-pie"></i> Performance Metrics
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-cog"></i> System Settings
+                </a>
+            </li>
+            <li class="nav-item mt-4">
+                <a class="nav-link text-danger" href="#">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-outline-primary me-3 d-none menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h2 class="mb-0 glow-primary"><i class="fas fa-tachometer-alt me-2"></i>Admin Dashboard</h2>
+            </div>
+            <div class="user-profile">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Admin">
+                <div>
+                    <h6 class="mb-0">Admin User</h6>
+                    <small class="text-muted">Super Admin</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3 animate-fade delay-1">
+                <div class="stat-card bookings glass-card">
+                    <i class="fas fa-calendar-check"></i>
+                    <h3>1,248</h3>
+                    <p>Total Bookings</p>
+                    <small>+12% from last month</small>
+                </div>
+            </div>
+            <div class="col-md-3 animate-fade delay-2">
+                <div class="stat-card turfs glass-card">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <h3>42</h3>
+                    <p>Active Turfs</p>
+                    <small>5 pending approval</small>
+                </div>
+            </div>
+            <div class="col-md-3 animate-fade delay-3">
+                <div class="stat-card revenue glass-card">
+                    <i class="fas fa-rupee-sign"></i>
+                    <h3>₹2.4M</h3>
+                    <p>Total Revenue</p>
+                    <small>+18% from last quarter</small>
+                </div>
+            </div>
+            <div class="col-md-3 animate-fade delay-4">
+                <div class="stat-card players glass-card">
+                    <i class="fas fa-user-friends"></i>
+                    <h3>586</h3>
+                    <p>Active Players</p>
+                    <small>32 new this week</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tabs Navigation -->
+        <ul class="nav custom-tabs mb-4" id="dashboardTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="turf-tab" data-bs-toggle="tab" data-bs-target="#turf-tab-pane" type="button" role="tab">
+                    <i class="fas fa-map-marked-alt me-2"></i> Turf Management
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users-tab-pane" type="button" role="tab">
+                    <i class="fas fa-users me-2"></i> User Management
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="players-tab" data-bs-toggle="tab" data-bs-target="#players-tab-pane" type="button" role="tab">
+                    <i class="fas fa-user-friends me-2"></i> Player Analytics
+                </button>
+            </li>
+        </ul>
+        
+        <!-- Tabs Content -->
+        <div class="tab-content" id="dashboardTabsContent">
+            <!-- Turf Management Tab -->
+            <div class="tab-pane fade show active" id="turf-tab-pane" role="tabpanel">
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="glass-card p-4 mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4><i class="fas fa-map-marked-alt me-2"></i>Turf List</h4>
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-plus me-1"></i> Add New Turf
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table custom-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Turf Name</th>
+                                            <th>Location</th>
+                                            <th>Status</th>
+                                            <th>Bookings</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40" alt="Turf" class="rounded me-3" width="40" height="40">
+                                                    <span>Central Park Turf</span>
+                                                </div>
+                                            </td>
+                                            <td>New York</td>
+                                            <td><span class="badge badge-success">Active</span></td>
+                                            <td>128</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40" alt="Turf" class="rounded me-3" width="40" height="40">
+                                                    <span>Sports Arena</span>
+                                                </div>
+                                            </td>
+                                            <td>Chicago</td>
+                                            <td><span class="badge badge-success">Active</span></td>
+                                            <td>92</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40" alt="Turf" class="rounded me-3" width="40" height="40">
+                                                    <span>Elite Football Ground</span>
+                                                </div>
+                                            </td>
+                                            <td>Los Angeles</td>
+                                            <td><span class="badge badge-warning">Pending</span></td>
+                                            <td>0</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://via.placeholder.com/40x40" alt="Turf" class="rounded me-3" width="40" height="40">
+                                                    <span>City Sports Complex</span>
+                                                </div>
+                                            </td>
+                                            <td>Miami</td>
+                                            <td><span class="badge badge-danger">Disabled</span></td>
+                                            <td>45</td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="glass-card p-4">
+                            <h4 class="mb-4"><i class="fas fa-chart-pie me-2"></i>Turf Statistics</h4>
+                            <div class="mb-4">
+                                <h6>Turf Status Distribution</h6>
+                                <div style="height: 200px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                    <p class="text-muted mb-0">Pie chart would appear here</p>
+                                </div>
+                            </div>
+                            <div>
+                                <h6>Top Performing Turfs</h6>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-transparent text-white border-white-10 d-flex justify-content-between align-items-center">
+                                        Central Park Turf
+                                        <span class="badge bg-primary">128 bookings</span>
+                                    </li>
+                                    <li class="list-group-item bg-transparent text-white border-white-10 d-flex justify-content-between align-items-center">
+                                        Sports Arena
+                                        <span class="badge bg-primary">92 bookings</span>
+                                    </li>
+                                    <li class="list-group-item bg-transparent text-white border-white-10 d-flex justify-content-between align-items-center">
+                                        Green Field Arena
+                                        <span class="badge bg-primary">78 bookings</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="glass-card p-4">
+                    <h4 class="mb-4"><i class="fas fa-images me-2"></i>Turf Gallery</h4>
+                    <div class="row">
+                        <div class="col-md-3 mb-4">
+                            <div class="turf-card">
+                                <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018" alt="Turf">
+                                <div class="turf-card-overlay">
+                                    <h5 class="mb-1">Central Park</h5>
+                                    <small class="text-muted">New York</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="turf-card">
+                                <img src="https://images.unsplash.com/photo-1543357480-c60d400e2ef9" alt="Turf">
+                                <div class="turf-card-overlay">
+                                    <h5 class="mb-1">Sports Arena</h5>
+                                    <small class="text-muted">Chicago</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="turf-card">
+                                <img src="https://images.unsplash.com/photo-1575361204480-aadea25e6e68" alt="Turf">
+                                <div class="turf-card-overlay">
+                                    <h5 class="mb-1">Elite Football</h5>
+                                    <small class="text-muted">Los Angeles</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 mb-4">
+                            <div class="turf-card">
+                                <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20" alt="Turf">
+                                <div class="turf-card-overlay">
+                                    <h5 class="mb-1">City Complex</h5>
+                                    <small class="text-muted">Miami</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User Management Tab -->
+            <div class="tab-pane fade" id="users-tab-pane" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="glass-card p-4 mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4><i class="fas fa-users me-2"></i>User Management</h4>
+                                <div>
+                                    <button class="btn btn-primary me-2">
+                                        <i class="fas fa-plus me-1"></i> Add User
+                                    </button>
+                                    <button class="btn btn-outline-primary">
+                                        <i class="fas fa-download me-1"></i> Export
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table custom-table">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="rounded-circle me-3" width="40" height="40">
+                                                    <div>
+                                                        <h6 class="mb-0">John Smith</h6>
+                                                        <small class="text-muted">@johnsmith</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>john@example.com</td>
+                                            <td>Admin</td>
+                                            <td><span class="badge badge-success">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" class="rounded-circle me-3" width="40" height="40">
+                                                    <div>
+                                                        <h6 class="mb-0">Sarah Johnson</h6>
+                                                        <small class="text-muted">@sarahj</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>sarah@example.com</td>
+                                            <td>Turf Owner</td>
+                                            <td><span class="badge badge-success">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="User" class="rounded-circle me-3" width="40" height="40">
+                                                    <div>
+                                                        <h6 class="mb-0">Mike Peterson</h6>
+                                                        <small class="text-muted">@mikep</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>mike@example.com</td>
+                                            <td>Turf Owner</td>
+                                            <td><span class="badge badge-warning">Pending</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="User" class="rounded-circle me-3" width="40" height="40">
+                                                    <div>
+                                                        <h6 class="mb-0">Emma Wilson</h6>
+                                                        <small class="text-muted">@emmaw</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>emma@example.com</td>
+                                            <td>Player</td>
+                                            <td><span class="badge badge-success">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary me-1">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="glass-card p-4 mb-4">
+                            <h4 class="mb-4"><i class="fas fa-user-plus me-2"></i>Add New User</h4>
+                            <form>
+                                <div class="mb-3">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control bg-dark border-dark text-white" placeholder="Enter full name">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email Address</label>
+                                    <input type="email" class="form-control bg-dark border-dark text-white" placeholder="Enter email">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Role</label>
+                                    <select class="form-select bg-dark border-dark text-white">
+                                        <option>Select role</option>
+                                        <option>Admin</option>
+                                        <option>Turf Owner</option>
+                                        <option>Player</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Password</label>
+                                    <input type="password" class="form-control bg-dark border-dark text-white" placeholder="Enter password">
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-save me-1"></i> Create User
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <div class="glass-card p-4">
+                            <h4 class="mb-4"><i class="fas fa-chart-bar me-2"></i>User Statistics</h4>
+                            <div class="mb-4">
+                                <h6>User Distribution</h6>
+                                <div style="height: 150px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                    <p class="text-muted mb-0">Chart would appear here</p>
+                                </div>
+                            </div>
+                            <div>
+                                <h6>Quick Actions</h6>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-outline-primary text-start">
+                                        <i class="fas fa-envelope me-2"></i> Send Mass Email
+                                    </button>
+                                    <button class="btn btn-outline-primary text-start">
+                                        <i class="fas fa-bell me-2"></i> Send Notification
+                                    </button>
+                                    <button class="btn btn-outline-primary text-start">
+                                        <i class="fas fa-file-export me-2"></i> Export User Data
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Player Analytics Tab -->
+            <div class="tab-pane fade" id="players-tab-pane" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="glass-card p-4 mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4><i class="fas fa-user-friends me-2"></i>Player Analytics</h4>
+                                <div class="input-group" style="width: 300px;">
+                                    <input type="text" class="form-control bg-dark border-dark text-white" placeholder="Search players...">
+                                    <button class="btn btn-primary" type="button">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table custom-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Player</th>
+                                            <th>Bookings</th>
+                                            <th>Last Played</th>
+                                            <th>Favorite Turf</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Player" class="rounded-circle me-3" width="40" height="40">
+                                                    <div>
+                                                        <h6 class="mb-0">John Smith</h6>
+                                                        <small class="text-muted">New York</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>24</td>
+                                            <td>2 days ago</td>
+                                            <td>Central Park</td>
+                                            <td><span class="badge badge-success">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i> View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Player" class="rounded-circle me-3" width="40" height="40">
+                                                    <div>
+                                                        <h6 class="mb-0">Sarah Johnson</h6>
+                                                        <small class="text-muted">Chicago</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>18</td>
+                                            <td>1 week ago</td>
+                                            <td>Sports Arena</td>
+                                            <td><span class="badge badge-success">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i> View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Player" class="rounded-circle me-3" width="40" height="40">
+                                                    <div>
+                                                        <h6 class="mb-0">Mike Peterson</h6>
+                                                        <small class="text-muted">Los Angeles</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>12</td>
+                                            <td>3 days ago</td>
+                                            <td>Elite Football</td>
+                                            <td><span class="badge badge-success">Active</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i> View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Player" class="rounded-circle me-3" width="40" height="40">
+                                                    <div>
+                                                        <h6 class="mb-0">Emma Wilson</h6>
+                                                        <small class="text-muted">Miami</small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>8</td>
+                                            <td>2 weeks ago</td>
+                                            <td>City Complex</td>
+                                            <td><span class="badge badge-warning">Inactive</span></td>
+                                            <td>
+                                                <button class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i> View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card p-4">
+                            <h4 class="mb-4"><i class="fas fa-chart-line me-2"></i>Player Engagement</h4>
+                            <div style="height: 300px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                <p class="text-muted">Engagement chart would appear here</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="glass-card p-4 mb-4">
+                            <div class="text-center mb-4">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Player" class="player-avatar">
+                                <h4 class="mt-3 mb-1">John Smith</h4>
+                                <p class="text-muted">Premium Player</p>
+                                <div class="text-warning mb-3">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                    <span class="text-white ms-2">4.5</span>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h6><i class="fas fa-info-circle me-2 text-primary"></i>Player Information</h6>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item bg-transparent text-white border-white-10 d-flex justify-content-between">
+                                        <span>Email:</span>
+                                        <span>john@example.com</span>
+                                    </li>
+                                    <li class="list-group-item bg-transparent text-white border-white-10 d-flex justify-content-between">
+                                        <span>Phone:</span>
+                                        <span>+1 (555) 123-4567</span>
+                                    </li>
+                                    <li class="list-group-item bg-transparent text-white border-white-10 d-flex justify-content-between">
+                                        <span>Location:</span>
+                                        <span>New York, USA</span>
+                                    </li>
+                                    <li class="list-group-item bg-transparent text-white border-white-10 d-flex justify-content-between">
+                                        <span>Member Since:</span>
+                                        <span>Jan 2022</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h6><i class="fas fa-chart-pie me-2 text-primary"></i>Player Stats</h6>
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <div class="h4 mb-0">24</div>
+                                        <small class="text-muted">Bookings</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="h4 mb-0">₹36K</div>
+                                        <small class="text-muted">Spent</small>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="h4 mb-0">3</div>
+                                        <small class="text-muted">Teams</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h6><i class="fas fa-heart me-2 text-primary"></i>Preferences</h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <span class="badge bg-primary">Football</span>
+                                    <span class="badge bg-primary">Weekends</span>
+                                    <span class="badge bg-primary">Evenings</span>
+                                    <span class="badge bg-primary">Central Park</span>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-primary w-100">
+                                <i class="fas fa-envelope me-1"></i> Send Message
+                            </button>
+                        </div>
+                        
+                        <div class="glass-card p-4">
+                            <h4 class="mb-4"><i class="fas fa-trophy me-2"></i>Top Players</h4>
+                            <div class="list-group list-group-flush">
+                                <a href="#" class="list-group-item list-group-item-action bg-transparent text-white border-white-10 d-flex align-items-center">
+                                    <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Player" class="rounded-circle me-3" width="40" height="40">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0">John Smith</h6>
+                                        <small class="text-muted">24 bookings</small>
+                                    </div>
+                                    <span class="badge bg-primary">#1</span>
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action bg-transparent text-white border-white-10 d-flex align-items-center">
+                                    <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Player" class="rounded-circle me-3" width="40" height="40">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0">Sarah Johnson</h6>
+                                        <small class="text-muted">18 bookings</small>
+                                    </div>
+                                    <span class="badge bg-secondary">#2</span>
+                                </a>
+                                <a href="#" class="list-group-item list-group-item-action bg-transparent text-white border-white-10 d-flex align-items-center">
+                                    <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Player" class="rounded-circle me-3" width="40" height="40">
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-0">Mike Peterson</h6>
+                                        <small class="text-muted">12 bookings</small>
+                                    </div>
+                                    <span class="badge bg-warning text-dark">#3</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <script>
+        // Toggle sidebar on mobile
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+        
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
+            // Tab switching simulation
+            const tabPanes = document.querySelectorAll('.tab-pane');
+            tabPanes.forEach(pane => {
+                pane.style.minHeight = window.innerHeight - 200 + 'px';
+            });
+        });
+        
+        // Animation on scroll
+        window.addEventListener('scroll', function() {
+            const elements = document.querySelectorAll('.animate-fade');
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (elementPosition < windowHeight - 100) {
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }
+            });
+        });
+    </script> -->
+</body>
+</html>

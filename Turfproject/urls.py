@@ -41,6 +41,11 @@ urlpatterns = [
     path("turf_management/<int:turf_id>",views.manage_turf,name='manage_turf'),
     path("toggle_status/<int:turf_id>",views.toggle_status,name='toggle_status'),
     path("cancel_booking/<int:booking_id>",views.Cancel_booking,name='cancel_booking'),
+    path("admin_dashboard/",views.admin_dashboard,name='admin_dashboard'),
+    path("approved/<int:turf_id>",views.approved,name='approved'),
+    path("disapproved/<int:turf_id>",views.disapproved,name='disapproved'),
+    path("admin_turfmanagement/",views.admin_turfmanagement,name='admin_turfmanagement'),
+    
 
     
 
