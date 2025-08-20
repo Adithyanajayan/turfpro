@@ -206,7 +206,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{% url 'admin_usermanagement' %}">
                             <i class="fas fa-users"></i> User Management
                         </a>
                     </li>
@@ -240,13 +240,13 @@
                     <li class="nav-item" role="presentation">
                         <button class="nav-link active" id="pending-tab" data-bs-toggle="pill" data-bs-target="#pending" type="button" role="tab">
                             <i class="fas fa-clock me-1"></i> Pending Approval
-                            <span class="badge bg-white text-dark ms-2" id="pending-count">3</span>
+                            <span class="badge bg-white text-dark ms-2" id="pending-count">{{pending_turfs.count}}</span>
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="approved-tab" data-bs-toggle="pill" data-bs-target="#approved" type="button" role="tab">
                             <i class="fas fa-check-circle me-1"></i> Approved Turfs
-                            <span class="badge bg-white text-dark ms-2" id="approved-count">2</span>
+                            <span class="badge bg-white text-dark ms-2" id="approved-count">{{approved_turfs.count}}</span>
                         </button>
                     </li>
                 </ul>
@@ -311,14 +311,15 @@
                                         <img src="{{turf.image.url}}" class="turf-img" alt="Turf Image">
                                         <div class="turf-actions">
                                             <form method="post" action="{% url 'delete_turf' turf.id %}"
-                                                style="display: inline;">
+                                                style="display: inline;"
+      onsubmit="return confirm('Are you sure you want to delete this turf? This action cannot be undone.');">
                                                 {% csrf_token %}
                                                 <button type="submit" class="action-btn delete-btn"
                                                     title="Confirm">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
-
+                                        
                                         </div>
                                     </div>
                                     <div class="p-3">

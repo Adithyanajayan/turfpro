@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from datetime import datetime,date,timedelta
 from django.utils import timezone
+from django.db.models import Count
 
 def Landing(request):
     return render(request,"landing.html")
@@ -382,9 +383,9 @@ def delete_turf(request, turf_id):
     if not upcoming_booking.exists():
         turf.delete()
         messages.success(request, "Turf deleted successfully.")
-        return redirect("owner_dashboard")
+        return redirect(request.META.get('HTTP_REFERER', 'owner_dashboard'))
     messages.error(request, "Cannot delete turf with upcoming bookings.")
-    return render(request,"manage_turf.html", {"turf": turf})
+    return redirect(request.META.get('HTTP_REFERER', 'manage_turf'))
     
 @login_required
 def Cancel_booking(request,booking_id):
@@ -416,8 +417,9 @@ def disapproved(request,turf_id):
     return redirect(request.META.get('HTTP_REFERER', 'admin_turfmanagement'))
 @login_required
 def admin_dashboard(request):
-    turfs = Turf_details.objects.all()
-    return render(request,"admin_dashboard.html",{'turfs':turfs})
+    turfs = Turf_details.objects.annotate(booking_count=Count('bookings')).order_by('-booking_count')
+    users = CustomUser.objects.filter(role__in=['player', 'owner'])
+    return render(request,"admin_dashboard.html",{'turfs':turfs,'users':users})
 
 @login_required
 def admin_turfmanagement(request):
@@ -425,5 +427,16 @@ def admin_turfmanagement(request):
     approved_turfs = Turf_details.objects.filter(is_approved=True)
     return render(request,"admin_turfmanagement.html",{'pending_turfs':pending_turfs,'approved_turfs':approved_turfs})
 
-    
+ 
 
+@login_required
+def admin_usermanagement(request):
+    users = CustomUser.objects.all()
+    
+    return render(request,"admin_usermanagement.html",{'users':users})
+
+
+@login_required
+def user_details(request,user_id):
+    user = get_object_or_404(CustomUser,id=user_id)
+    return render(request,"user_details.html",{'user':user})

@@ -45,6 +45,8 @@ urlpatterns = [
     path("approved/<int:turf_id>",views.approved,name='approved'),
     path("disapproved/<int:turf_id>",views.disapproved,name='disapproved'),
     path("admin_turfmanagement/",views.admin_turfmanagement,name='admin_turfmanagement'),
+    path("admin_usermanagement/",views.admin_usermanagement,name='admin_usermanagement'),
+    path("user_details/<int:user_id>/", views.user_details, name="user_details"),
     
 
     
