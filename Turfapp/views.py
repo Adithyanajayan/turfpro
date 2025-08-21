@@ -440,3 +440,19 @@ def admin_usermanagement(request):
 def user_details(request,user_id):
     user = get_object_or_404(CustomUser,id=user_id)
     return render(request,"user_details.html",{'user':user})
+
+@login_required
+def block_user(request,user_id):
+    user = CustomUser.objects.get(id = user_id)
+    user.is_active = False
+    user.save()
+    
+    return redirect(request.META.get('HTTP_REFERER', 'admin_usermanagement'))
+    
+@login_required
+def unblock_user(request,user_id):
+    user = CustomUser.objects.get(id = user_id)
+    user.is_active = True
+    user.save()
+    return redirect(request.META.get('HTTP_REFERER', 'admin_usermanagement'))
+    

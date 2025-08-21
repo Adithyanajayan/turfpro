@@ -47,6 +47,10 @@ urlpatterns = [
     path("admin_turfmanagement/",views.admin_turfmanagement,name='admin_turfmanagement'),
     path("admin_usermanagement/",views.admin_usermanagement,name='admin_usermanagement'),
     path("user_details/<int:user_id>/", views.user_details, name="user_details"),
+    path("block_user/<int:user_id>/", views.block_user, name="block_user"),
+    path("unblock_user/<int:user_id>/", views.unblock_user, name="unblock_user"),
+
+    
     
 
     

@@ -224,6 +224,76 @@
                 flex-direction: column;
             }
         }
+        /* Button Container */
+.action-container {
+    margin: 15px 0;
+    padding: 10px 0;
+    border-top: 1px solid #eee;
+}
+
+/* Base Button Styles */
+.action-btn {
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Block Button Styles */
+.approve-btn {
+    background: linear-gradient(to right, #ff416c, #ff4b2b);
+    color: white;
+}
+
+.approve-btn:hover {
+    background: linear-gradient(to right, #ff4b2b, #ff416c);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 75, 43, 0.3);
+}
+
+/* Unblock Button Styles */
+.reject-btn {
+    background: linear-gradient(to right, #0f9b0f, #00b09b);
+    color: white;
+}
+
+.reject-btn:hover {
+    background: linear-gradient(to right, #00b09b, #0f9b0f);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 176, 155, 0.3);
+}
+
+/* Icon Styles */
+.action-btn i {
+    margin-left: 8px;
+    font-size: 14px;
+}
+
+/* Active State */
+.action-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Focus State */
+.action-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+}
+
+/* Disabled State */
+.action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
     </style>
 </head>
 
@@ -350,8 +420,7 @@
                                         </td>
                                         <td>{{user.email}}</td>
                                         <td><span class="badge badge-admin">{{user.role}}</span></td>
-                                        <td><span class="badge badge-active">{{ user.is_active|yesno:"Active,Banned"
-                                                }}</span></td>
+                                        <td><span class="badge badge-active">{{ user.is_active|yesno:"Active,Banned"}}</span></td>
                                         <td>
                                             <div class="action-buttons">
 
@@ -359,10 +428,25 @@
                                                     >
                                                     <i class="fas fa-eye me-1"></i> View
                                                 </a>
-                                                <button class="btn btn-sm btn-outline-danger"
-                                                    onclick="toggleUserStatus(this, 'user-1')">
-                                                    <i class="fas fa-ban me-1"></i> Ban
+                                                {% if user.is_active %}
+                                                <form method="post" action="{% url 'block_user' user.id %}"
+                                                style="display: inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="action-btn approve-btn"
+                                                    title="Confirm">Block
+                                                    <i class="fas fa-ban"></i>
                                                 </button>
+                                            </form>
+                                            {% else %}
+                                            <form method="post" action="{% url 'unblock_user' user.id %}"
+                                                style="display: inline;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="action-btn reject-btn"
+                                                    title="Confirm">Unblock
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </form>
+                                            {% endif %}
                                             </div>
                                         </td>
                                     </tr>
