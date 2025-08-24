@@ -501,62 +501,34 @@
     <!-- Main Content -->
     <div class="main-container">
         <!-- Search and Filters -->
-        <section class="search-section">
-            <div class="search-header">
-                <h1>Find Your Perfect Turf</h1>
-                <div class="results-count">24 Turfs Found</div>
-            </div>
+        <form method="get" action="{% url 'turfs' %}">
+    <!-- Search -->
+    <input type="text" name="q" class="form-control"
+           value="{{ search_query }}" placeholder="Search turf...">
 
-            <div class="search-filters">
-                <div class="filter-group search-box">
-                    <label for="search">Search</label>
-                    <input type="text" id="search" placeholder="Search by turf name, location...">
-                    <i class="fas fa-search"></i>
-                </div>
+    <!-- Sport Filter -->
+    <select name="sport" class="form-control">
+        <option value="">All Sports</option>
+        {% for sport in sports %}
+            <option value="{{ sport.id }}" {% if selected_sport == sport.id|stringformat:"s" %}selected{% endif %}>
+                {{ sport.name }}
+            </option>
+        {% endfor %}
+    </select>
 
-                <div class="filter-group">
-                    <label for="sport">Sport</label>
-                    <select id="sport" class="filter-control">
-                        <option value="">All Sports</option>
-                        <option value="football">Football</option>
-                        <option value="cricket">Cricket</option>
-                        <option value="badminton">Badminton</option>
-                        <option value="tennis">Tennis</option>
-                        <option value="multi">Multi-Sport</option>
-                    </select>
-                </div>
+    <!-- Sort Filter -->
+    <select name="sort" class="form-control">
+        <option value="">Sort By</option>
+        <option value="price" {% if selected_sort == "price" %}selected{% endif %}>Price</option>
+        <option value="rating" {% if selected_sort == "rating" %}selected{% endif %}>Rating</option>
+    </select>
 
-                <div class="filter-group">
-                    <label for="location">Location</label>
-                    <select id="location" class="filter-control">
-                        <option value="">All Locations</option>
-                        <option value="north">North City</option>
-                        <option value="south">South City</option>
-                        <option value="east">East District</option>
-                        <option value="west">Westside</option>
-                        <option value="central">Central</option>
-                    </select>
-                </div>
+    <button type="submit" class="btn btn-primary">Apply</button>
+</form>
 
-                <div class="filter-group">
-                    <label for="sort">Sort By</label>
-                    <select id="sort" class="filter-control">
-                        <option value="popular">Most Popular</option>
-                        <option value="rating">Highest Rated</option>
-                        <option value="price_low">Price: Low to High</option>
-                        <option value="price_high">Price: High to Low</option>
-                        <option value="newest">Newest First</option>
-                    </select>
-                </div>
-
-                <div class="apply-filters">
-                    <button class="btn btn-solid">Apply Filters</button>
-                </div>
-            </div>
-        </section>
 
         <!-- Turf Listings -->
-        
+
         <section class="turf-list">
             {% for turf in turfs %}
             <div class="turf-card">
@@ -595,7 +567,8 @@
 
                         {% if turf.opening_time and turf.closing_time %}
                         <div class="feature-badge">
-                            <i class="fas fa-clock"></i> {{ turf.opening_time|time:"g:i A" }} - {{turf.closing_time|time:"g:i A" }}
+                            <i class="fas fa-clock"></i> {{ turf.opening_time|time:"g:i A" }} -
+                            {{turf.closing_time|time:"g:i A" }}
                         </div>
                         {% endif %}
 

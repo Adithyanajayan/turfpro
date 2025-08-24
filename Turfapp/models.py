@@ -3,6 +3,7 @@
 from django.contrib.auth.models import AbstractBaseUser,BaseUserManager, PermissionsMixin
 from django.db import models
 from datetime import time
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class UserManager(BaseUserManager):
@@ -32,6 +33,7 @@ class CustomUser(AbstractBaseUser,PermissionsMixin):
     email = models.EmailField(unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_blocked = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["phone", "first_name", "last_name"]
@@ -87,6 +89,17 @@ class Turf_details(models.Model):
     
     status = models.CharField(max_length=10,choices=STATUS_CHOICES,default='enabled')
     
+    def average_rating(self):
+        ratings = self.ratings.all()
+        return round(sum(r.value for r in ratings) / ratings.count(), 1) if ratings.exists() else 0
+
+class Rating(models.Model):
+    turf = models.ForeignKey(Turf_details, related_name="ratings", on_delete=models.CASCADE)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    value = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])  # rating 1–5
+
+    class Meta:
+        unique_together = ('turf', 'user')
     
     def toggle_status(self):
         self.status = 'disabled' if self.status == 'enabled' else 'enabled'
@@ -102,7 +115,7 @@ class Booking(models.Model):
     start_time = models.TimeField()
     end_time = models.TimeField()
     
-    STATUS_CHOICES =[('pending','pending'),('confirmed','confirmed'),('declined','declined')] 
+    STATUS_CHOICES =[('pending','pending'),('confirmed','confirmed'),('incomplete', 'Incomplete'),('completed','completed')] 
     
     
     status = models.CharField(choices=STATUS_CHOICES,default='pending',max_length=15)
@@ -112,13 +125,26 @@ class Booking(models.Model):
 
     def __str__(self):
         return f"{self.user.username} booked {self.turf.name} on {self.date}"
+    
+    def update_status(self):
+        
+        from datetime import date
+        today = date.today()
+
+        if self.date <= today :
+            if self.status == 'confirmed':
+                self.status = 'completed'
+            elif self.status == 'pending':
+                self.status = 'incomplete'
+            self.save()
     @property
     def duration_hours(self):
         from datetime import datetime, timedelta
         start = datetime.combine(self.date, self.start_time)
         end = datetime.combine(self.date, self.end_time)
         duration = end - start
-        return duration.total_seconds() / 3600
+        return max(duration.total_seconds() / 3600, 0)   
+   
     @property
     def total_price(self):
         return self.duration_hours * float(self.turf.price)

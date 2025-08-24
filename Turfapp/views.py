@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from datetime import datetime,date,timedelta
 from django.utils import timezone
 from django.db.models import Count
+from django.http import JsonResponse
 
 def Landing(request):
     return render(request,"landing.html")
@@ -12,7 +13,7 @@ def Landing(request):
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, authenticate, login,logout
 from django.contrib import messages
-from .models import CustomUser,Turf_details,Booking,Bill,Cancelled_booking,SportType
+from .models import CustomUser,Turf_details,Booking,Rating,Cancelled_booking,SportType
 
 
 def Register(request):
@@ -30,12 +31,13 @@ def Register(request):
             messages.error(request, "Passwords do not match")
             return redirect('register')
 
-        if CustomUser.objects.filter(username=email).exists():
+        if CustomUser.objects.filter(email=email).exists():
             messages.error(request, "User already exists")
             return redirect('register')
 
         user = CustomUser.objects.create_user(
-            username=email,
+            
+            
             email=email,
             password=password,
             phone=phone,
@@ -48,6 +50,9 @@ def Register(request):
 
         user = authenticate(request, username=email, password=password)
         if user is not None:
+            if user.is_blocked:
+                messages.error(request,"User is bloked by admin")
+                return render(request,"login.html")
             if user.role == "player":
                 login(request, user)
                 messages.success(request, "Login successful")
@@ -73,6 +78,9 @@ def Login(request):
 
         user = authenticate(request, username=email, password=password)
         if user is not None:
+            if user.is_blocked:
+                messages.error(request,"User is bloked by admin")
+                return render(request,"login.html")
             if user.role == "player":
                 login(request, user)
                 messages.success(request, "Login successful")
@@ -99,12 +107,44 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def Home(request):
     return render(request, 'home.html')
+from django.db.models import Q
+from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 
 @login_required
 def Turfs(request):
     turfs = Turf_details.objects.filter(status='enabled')
+
+    search_query = request.GET.get('q', '').strip()
+    selected_sport = request.GET.get('sport', '').strip()
+    selected_sort = request.GET.get('sort', '').strip()
     
-    return render(request,"turf.html",{'turfs':turfs})
+    
+    # 🔍 Search by location or name
+    if search_query:
+        turfs = turfs.filter(
+            Q(location__icontains=search_query) | Q(name__icontains=search_query)
+        )
+
+    # 🏀 Filter by sport type
+    if selected_sport:
+        turfs = turfs.filter(sport_types__id=selected_sport)
+
+    # ↕️ Sorting
+    if selected_sort == "price":
+        turfs = turfs.order_by("price")
+    elif selected_sort == "rating":
+        turfs = turfs.order_by("-ratings")   # ✅ correct field
+
+    sports = SportType.objects.all()
+
+    return render(request, "turf.html", {
+        'turfs': turfs,
+        'sports': sports,
+        'selected_sport': selected_sport,
+        'selected_sort': selected_sort,
+        'search_query': search_query,
+    })
 
 @login_required
 def Turf_Reg(request):
@@ -444,15 +484,60 @@ def user_details(request,user_id):
 @login_required
 def block_user(request,user_id):
     user = CustomUser.objects.get(id = user_id)
-    user.is_active = False
+    user.is_blocked = True
     user.save()
-    
+   
     return redirect(request.META.get('HTTP_REFERER', 'admin_usermanagement'))
-    
+
+
+  
 @login_required
 def unblock_user(request,user_id):
     user = CustomUser.objects.get(id = user_id)
-    user.is_active = True
+    user.is_blocked = False
     user.save()
-    return redirect(request.META.get('HTTP_REFERER', 'admin_usermanagement'))
     
+    return redirect(request.META.get('HTTP_REFERER', 'admin_usermanagement'))
+
+
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from .models import Booking
+
+def download_receipt(request, booking_id):
+    booking = Booking.objects.get(id=booking_id)
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="receipt_{booking.id}.pdf"'
+
+    p = canvas.Canvas(response, pagesize=letter)
+    p.setFont("Helvetica-Bold", 16)
+    p.drawString(200, 750, "Turf Booking Receipt")
+
+    p.setFont("Helvetica", 12)
+    p.drawString(100, 700, f"Booking ID: {booking.id}")
+    p.drawString(100, 680, f"User: {booking.user.first_name} {booking.user.last_name}")
+    p.drawString(100, 660, f"Turf: {booking.turf.name}")
+    p.drawString(100, 640, f"Date: {booking.date}")
+    p.drawString(100, 620, f"Time: {booking.start_time} - {booking.end_time}")
+    p.drawString(100, 600, f"Amount Paid: ₹{booking.total_price}")
+
+    p.drawString(100, 560, "Thank you for booking with us!")
+
+    p.showPage()
+    p.save()
+    return response
+
+def rate_turf(request, turf_id, value):
+    turf = get_object_or_404(Turf_details, id=turf_id)
+    if request.user.is_authenticated:
+        Rating.objects.update_or_create(
+            turf=turf,
+            user=request.user,
+            defaults={'value': value}
+        )
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'avg_rating': turf.average_rating()})
+    return redirect('turf_detail', turf_id=turf.id)
+

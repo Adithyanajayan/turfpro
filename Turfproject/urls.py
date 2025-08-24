@@ -49,6 +49,9 @@ urlpatterns = [
     path("user_details/<int:user_id>/", views.user_details, name="user_details"),
     path("block_user/<int:user_id>/", views.block_user, name="block_user"),
     path("unblock_user/<int:user_id>/", views.unblock_user, name="unblock_user"),
+    path("download_receipt/<int:booking_id>/", views.download_receipt, name="download_receipt"),
+    path('turf/<int:turf_id>/rate/<int:value>/', views.rate_turf, name='rate_turf'),
+
 
     
     
