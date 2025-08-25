@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "Turfapp",
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -129,3 +130,8 @@ LOGIN_URL = '/login/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+CRONJOBS = [
+    ('0 0 * * *', 'booking.cron.update_booking_status'),  
+    # runs every midnight
+]

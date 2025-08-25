@@ -8,14 +8,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #4CAF50;
-            --primary-dark: #45a049;
-            --primary-light: #e8f5e9;
+            --primary: #DC143C;
+            --primary-dark: #B22222;
+            --primary-light: #FFE5E9;
+            --secondary: #2C3E50;
             --light: #f8f9fa;
             --dark: #212529;
             --gray: #6c757d;
             --error: #e74c3c;
-            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --shadow: 0 5px 15px rgba(220, 20, 60, 0.15);
+            --gradient: linear-gradient(135deg, #DC143C 0%, #B22222 100%);
         }
 
         * {
@@ -26,14 +28,14 @@
         }
 
         body {
-            background-color: #f5f5f5;
+            background-color: #f9f9f9;
             color: var(--dark);
             line-height: 1.6;
         }
 
         /* Header Styles */
         header {
-            background-color: white;
+            background: var(--gradient);
             box-shadow: var(--shadow);
             position: sticky;
             top: 0;
@@ -54,7 +56,7 @@
             align-items: center;
             font-size: 24px;
             font-weight: 700;
-            color: var(--primary);
+            color: white;
             text-decoration: none;
         }
 
@@ -74,13 +76,32 @@
 
         .nav-links a {
             text-decoration: none;
-            color: var(--dark);
+            color: rgba(255, 255, 255, 0.9);
             font-weight: 600;
             transition: color 0.3s;
+            padding: 5px 0;
+            position: relative;
         }
 
-        .nav-links a:hover {
-            color: var(--primary);
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: white;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: white;
         }
 
         .nav-buttons .btn {
@@ -93,21 +114,22 @@
         }
 
         .btn-outline {
-            border: 2px solid var(--primary);
-            color: var(--primary);
+            border: 2px solid white;
+            color: white;
+            background: transparent;
         }
 
         .btn-outline:hover {
-            background-color: var(--primary-light);
+            background-color: rgba(255, 255, 255, 0.1);
         }
 
         .btn-solid {
-            background-color: var(--primary);
-            color: white;
+            background-color: white;
+            color: var(--primary);
         }
 
         .btn-solid:hover {
-            background-color: var(--primary-dark);
+            background-color: var(--primary-light);
             transform: translateY(-2px);
         }
 
@@ -125,6 +147,7 @@
             padding: 25px;
             box-shadow: var(--shadow);
             margin-bottom: 30px;
+            border-top: 3px solid var(--primary);
         }
 
         .search-header {
@@ -136,11 +159,24 @@
 
         .search-header h1 {
             font-size: 28px;
-            color: var(--dark);
+            color: var(--secondary);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .search-header h1::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--primary);
         }
 
         .results-count {
             color: var(--gray);
+            font-weight: 500;
         }
 
         .search-filters {
@@ -158,7 +194,7 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: var(--dark);
+            color: var(--secondary);
         }
 
         .filter-control {
@@ -173,6 +209,13 @@
             background-position: right 15px center;
             background-size: 15px;
             cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .filter-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(220, 20, 60, 0.2);
         }
 
         .search-box {
@@ -185,6 +228,13 @@
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(220, 20, 60, 0.2);
         }
 
         .search-box i {
@@ -200,6 +250,23 @@
             text-align: right;
         }
 
+        .apply-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(220, 20, 60, 0.3);
+        }
+
+        .apply-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(220, 20, 60, 0.4);
+        }
+
         /* Turf Listings */
         .turf-list {
             display: grid;
@@ -213,16 +280,30 @@
             box-shadow: var(--shadow);
             display: grid;
             grid-template-columns: 300px 1fr;
-            transition: transform 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
         }
 
         .turf-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(220, 20, 60, 0.2);
         }
 
         .turf-image {
             height: 100%;
             overflow: hidden;
+            position: relative;
+        }
+
+        .turf-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.1) 100%);
+            z-index: 1;
         }
 
         .turf-image img {
@@ -246,11 +327,13 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 15px;
+            align-items: flex-start;
         }
 
         .turf-title h2 {
             font-size: 22px;
             margin-bottom: 5px;
+            color: var(--secondary);
         }
 
         .turf-location {
@@ -281,18 +364,25 @@
         .turf-features {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            gap: 10px;
             margin: 15px 0;
         }
 
         .feature-badge {
             background-color: var(--primary-light);
-            color: var(--primary);
-            padding: 5px 10px;
+            color: var(--primary-dark);
+            padding: 6px 12px;
             border-radius: 5px;
             font-size: 14px;
             display: flex;
             align-items: center;
+            transition: all 0.3s;
+        }
+
+        .feature-badge:hover {
+            background-color: var(--primary);
+            color: white;
+            transform: translateY(-2px);
         }
 
         .feature-badge i {
@@ -303,6 +393,7 @@
             color: var(--gray);
             margin-bottom: 20px;
             flex-grow: 1;
+            line-height: 1.7;
         }
 
         .turf-footer {
@@ -324,6 +415,25 @@
             color: var(--gray);
         }
 
+        .btn-book {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 4px 10px rgba(220, 20, 60, 0.3);
+        }
+
+        .btn-book:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(220, 20, 60, 0.4);
+        }
+
         /* Pagination */
         .pagination {
             display: flex;
@@ -333,27 +443,30 @@
 
         .pagination a {
             color: var(--dark);
-            padding: 8px 16px;
+            padding: 10px 16px;
             text-decoration: none;
             border: 1px solid #ddd;
             margin: 0 4px;
             border-radius: 5px;
             transition: all 0.3s;
+            font-weight: 600;
         }
 
         .pagination a.active {
-            background-color: var(--primary);
+            background: var(--gradient);
             color: white;
             border-color: var(--primary);
         }
 
         .pagination a:hover:not(.active) {
-            background-color: #ddd;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary-light);
         }
 
         /* Footer */
         footer {
-            background-color: var(--dark);
+            background-color: var(--secondary);
             color: white;
             padding: 60px 5% 30px;
             margin-top: 60px;
@@ -390,6 +503,13 @@
 
         .footer-column li {
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-column i {
+            margin-right: 10px;
+            color: var(--primary);
         }
 
         .footer-column a {
@@ -459,17 +579,41 @@
                 align-items: flex-start;
                 gap: 10px;
             }
+            
+            .navbar {
+                flex-direction: column;
+                padding: 15px;
+            }
+            
+            .nav-links {
+                margin: 15px 0;
+            }
+            
+            .nav-links li {
+                margin-left: 15px;
+                margin-right: 15px;
+            }
         }
 
         @media (max-width: 576px) {
             .turf-features {
-                gap: 10px;
+                gap: 8px;
+            }
+            
+            .feature-badge {
+                font-size: 12px;
+                padding: 5px 10px;
             }
 
             .turf-footer {
                 flex-direction: column;
                 gap: 15px;
                 align-items: flex-start;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
             }
         }
     </style>
@@ -502,33 +646,48 @@
     <div class="main-container">
         <!-- Search and Filters -->
         <form method="get" action="{% url 'turfs' %}">
-    <!-- Search -->
-    <input type="text" name="q" class="form-control"
-           value="{{ search_query }}" placeholder="Search turf...">
+            <section class="search-section">
+                <div class="search-header">
+                    <h1>Find Your Perfect Turf</h1>
+                    <div class="results-count">{{ turfs|length }} Turfs Found</div>
+                </div>
 
-    <!-- Sport Filter -->
-    <select name="sport" class="form-control">
-        <option value="">All Sports</option>
-        {% for sport in sports %}
-            <option value="{{ sport.id }}" {% if selected_sport == sport.id|stringformat:"s" %}selected{% endif %}>
-                {{ sport.name }}
-            </option>
-        {% endfor %}
-    </select>
+                <div class="search-filters">
+                    <div class="filter-group">
+                        <label for="sport">Sport Type</label>
+                        <select id="sport" name="sport" class="filter-control">
+                            <option value="">All Sports</option>
+                            {% for sport in sports %}
+                                <option value="{{ sport.id }}" {% if selected_sport == sport.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ sport.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-    <!-- Sort Filter -->
-    <select name="sort" class="form-control">
-        <option value="">Sort By</option>
-        <option value="price" {% if selected_sort == "price" %}selected{% endif %}>Price</option>
-        <option value="rating" {% if selected_sort == "rating" %}selected{% endif %}>Rating</option>
-    </select>
+                    <div class="filter-group">
+                        <label for="sort">Sort By</label>
+                        <select id="sort" name="sort" class="filter-control">
+                            <option value="">Sort By</option>
+                            <option value="price" {% if selected_sort == "price" %}selected{% endif %}>Price</option>
+                            <option value="rating" {% if selected_sort == "rating" %}selected{% endif %}>Rating</option>
+                        </select>
+                    </div>
 
-    <button type="submit" class="btn btn-primary">Apply</button>
-</form>
+                    <div class="filter-group search-box">
+                        <label for="search">Search Turfs</label>
+                        <input type="text" id="search" name="q" value="{{ search_query }}" placeholder="Enter turf name or feature">
+                        <i class="fas fa-search"></i>
+                    </div>
 
+                    <div class="apply-filters">
+                        <button type="submit" class="apply-btn">Apply Filters</button>
+                    </div>
+                </div>
+            </section>
+        </form>
 
         <!-- Turf Listings -->
-
         <section class="turf-list">
             {% for turf in turfs %}
             <div class="turf-card">
@@ -547,9 +706,11 @@
                                 <i class="fas fa-map-marker-alt"></i> {{ turf.location }}
                             </div>
                         </div>
-                        <div class="turf-price">
-                            ₹{{ turf.price }} <span>/ hour</span>
+                        {% if turf.average_rating %}
+                        <div class="turf-rating">
+                            <i class="fas fa-star"></i> {{ turf.average_rating|floatformat:1 }}
                         </div>
+                        {% endif %}
                     </div>
 
                     <div class="turf-features">
@@ -598,22 +759,40 @@
                     {% endif %}
 
                     <div class="turf-footer">
-                        <a href="{% url 'turf_booking' turf.id %}" class="btn btn-solid">Book Now</a>
+                        <div class="turf-price">
+                            ₹{{ turf.price }} <span>/ hour</span>
+                        </div>
+                        <a href="{% url 'turf_booking' turf.id %}" class="btn-book">Book Now</a>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </section>
+
         <!-- Pagination -->
+        {% if turfs.has_other_pages %}
         <div class="pagination">
-            <a href="#">&laquo;</a>
-            <a href="#" class="active">1</a>
-            <a href="#">2</a>
-            <a href="#">3</a>
-            <a href="#">4</a>
-            <a href="#">5</a>
-            <a href="#">&raquo;</a>
+            {% if turfs.has_previous %}
+                <a href="?page={{ turfs.previous_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if selected_sport %}&sport={{ selected_sport }}{% endif %}{% if selected_sort %}&sort={{ selected_sort }}{% endif %}">&laquo;</a>
+            {% else %}
+                <a class="disabled">&laquo;</a>
+            {% endif %}
+            
+            {% for i in turfs.paginator.page_range %}
+                {% if turfs.number == i %}
+                    <a class="active">{{ i }}</a>
+                {% else %}
+                    <a href="?page={{ i }}{% if search_query %}&q={{ search_query }}{% endif %}{% if selected_sport %}&sport={{ selected_sport }}{% endif %}{% if selected_sort %}&sort={{ selected_sort }}{% endif %}">{{ i }}</a>
+                {% endif %}
+            {% endfor %}
+            
+            {% if turfs.has_next %}
+                <a href="?page={{ turfs.next_page_number }}{% if search_query %}&q={{ search_query }}{% endif %}{% if selected_sport %}&sport={{ selected_sport }}{% endif %}{% if selected_sort %}&sort={{ selected_sort }}{% endif %}">&raquo;</a>
+            {% else %}
+                <a class="disabled">&raquo;</a>
+            {% endif %}
         </div>
+        {% endif %}
     </div>
 
     <!-- Footer -->
@@ -634,11 +813,10 @@
             <div class="footer-column">
                 <h3>Quick Links</h3>
                 <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="turfs.html">Turfs</a></li>
-                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'turfs' %}">Turfs</a></li>
+                    <li><a href="{% url 'player_booking' %}">My Bookings</a></li>
                     <li><a href="contact.html">Contact</a></li>
-                    <li><a href="blog.html">Blog</a></li>
                 </ul>
             </div>
 
@@ -648,7 +826,6 @@
                     <li><a href="faq.html">FAQ</a></li>
                     <li><a href="privacy.html">Privacy Policy</a></li>
                     <li><a href="terms.html">Terms of Service</a></li>
-                    <li><a href="refund.html">Refund Policy</a></li>
                     <li><a href="help.html">Help Center</a></li>
                 </ul>
             </div>
@@ -667,44 +844,40 @@
             <p>&copy; 2023 TurfPro. All rights reserved.</p>
         </div>
     </footer>
-
-    <!-- <script>
+<!-- 
+    <script>
         // Search and Filter Functionality
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('search');
             const sportFilter = document.getElementById('sport');
-            const locationFilter = document.getElementById('location');
             const sortFilter = document.getElementById('sort');
-            const applyBtn = document.querySelector('.apply-filters .btn');
+            const applyBtn = document.querySelector('.apply-btn');
             const turfCards = document.querySelectorAll('.turf-card');
             const resultsCount = document.querySelector('.results-count');
             
             // Apply filters function
             function applyFilters() {
                 const searchTerm = searchInput.value.toLowerCase();
-                const selectedSport = sportFilter.value;
-                const selectedLocation = locationFilter.value;
+                const selectedSport = sportFilter.options[sportFilter.selectedIndex].text.toLowerCase();
                 const selectedSort = sortFilter.value;
                 
                 let visibleCount = 0;
                 
                 turfCards.forEach(card => {
                     const title = card.querySelector('.turf-title h2').textContent.toLowerCase();
-                    const sport = card.querySelector('.feature-badge:nth-child(1)').textContent.toLowerCase();
-                    const location = card.querySelector('.turf-location').textContent.toLowerCase();
+                    const features = card.querySelector('.turf-features').textContent.toLowerCase();
+                    const description = card.querySelector('.turf-description') ? 
+                                      card.querySelector('.turf-description').textContent.toLowerCase() : '';
                     
                     // Check search term
-                    const matchesSearch = title.includes(searchTerm) || 
-                                        card.querySelector('.turf-description').textContent.toLowerCase().includes(searchTerm);
+                    const matchesSearch = title.includes(searchTerm) || features.includes(searchTerm) || 
+                                        description.includes(searchTerm);
                     
                     // Check sport filter
-                    const matchesSport = !selectedSport || sport.includes(selectedSport);
-                    
-                    // Check location filter
-                    const matchesLocation = !selectedLocation || location.includes(selectedLocation);
+                    const matchesSport = !selectedSport || features.includes(selectedSport);
                     
                     // Show/hide card based on filters
-                    if (matchesSearch && matchesSport && matchesLocation) {
+                    if (matchesSearch && matchesSport) {
                         card.style.display = 'grid';
                         visibleCount++;
                     } else {
@@ -716,7 +889,9 @@
                 resultsCount.textContent = `${visibleCount} Turfs Found`;
                 
                 // Sort results
-                sortTurfs(selectedSort);
+                if (selectedSort) {
+                    sortTurfs(selectedSort);
+                }
             }
             
             // Sort turfs function
@@ -727,22 +902,19 @@
                 cards.sort((a, b) => {
                     switch(sortMethod) {
                         case 'rating':
-                            const ratingA = parseFloat(a.querySelector('.turf-rating').textContent);
-                            const ratingB = parseFloat(b.querySelector('.turf-rating').textContent);
+                            const ratingA = parseFloat(a.querySelector('.turf-rating') ? 
+                                                     a.querySelector('.turf-rating').textContent : 0);
+                            const ratingB = parseFloat(b.querySelector('.turf-rating') ? 
+                                                     b.querySelector('.turf-rating').textContent : 0);
                             return ratingB - ratingA;
                             
-                        case 'price_low':
+                        case 'price':
                             const priceA = parseInt(a.querySelector('.turf-price').textContent.replace(/[^0-9]/g, ''));
                             const priceB = parseInt(b.querySelector('.turf-price').textContent.replace(/[^0-9]/g, ''));
                             return priceA - priceB;
                             
-                        case 'price_high':
-                            const priceHighA = parseInt(a.querySelector('.turf-price').textContent.replace(/[^0-9]/g, ''));
-                            const priceHighB = parseInt(b.querySelector('.turf-price').textContent.replace(/[^0-9]/g, ''));
-                            return priceHighB - priceHighA;
-                            
                         default:
-                            return 0; // Default is already sorted by popularity in HTML
+                            return 0;
                     }
                 });
                 
@@ -753,17 +925,18 @@
             }
             
             // Event listeners
-            applyBtn.addEventListener('click', applyFilters);
+            applyBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                applyFilters();
+            });
             
             // Search on Enter key
             searchInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
+                    e.preventDefault();
                     applyFilters();
                 }
             });
-            
-            // Initialize with all turfs visible
-            applyFilters();
         });
     </script> -->
 </body>
