@@ -25,6 +25,7 @@ def Register(request):
         role = request.POST['role']
         password = request.POST['password']
         confirm_password = request.POST['confirmPassword']
+        image = request.FILES.get('image')
     
 
         if password != confirm_password:
@@ -43,7 +44,8 @@ def Register(request):
             phone=phone,
             role=role,
             first_name=first_name,
-            last_name=last_name
+            last_name=last_name,
+            profile_pic = image,
             
         )
         user.save()
@@ -113,7 +115,7 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def Turfs(request):
-    turfs = Turf_details.objects.filter(status='enabled')
+    turfs = Turf_details.objects.filter(status='enabled',is_approved=True)
 
     search_query = request.GET.get('q', '').strip()
     selected_sport = request.GET.get('sport', '').strip()
@@ -535,9 +537,16 @@ def rate_turf(request, turf_id, value):
         Rating.objects.update_or_create(
             turf=turf,
             user=request.user,
-            defaults={'value': value}
+            defaults={'value': int(value)}
         )
-    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({'avg_rating': turf.average_rating()})
-    return redirect('turf_detail', turf_id=turf.id)
+    # if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+    #     return JsonResponse({'avg_rating': turf.average_rating})
+    return redirect('player_booking')
 
+from django.shortcuts import redirect, resolve_url
+
+def cancel(request):
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        return redirect(referer)
+    return redirect(resolve_url('home'))

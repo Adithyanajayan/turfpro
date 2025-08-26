@@ -40,6 +40,32 @@
         header {
             text-align: center;
             margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .back-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-50%) translateX(-5px);
         }
 
         h1 {
@@ -275,6 +301,18 @@
             .container {
                 padding: 1rem;
             }
+
+            .back-button {
+                position: relative;
+                margin-bottom: 1rem;
+                transform: none;
+                display: inline-flex;
+                justify-content: center;
+            }
+
+            header {
+                text-align: center;
+            }
         }
 
         .slot-row {
@@ -363,6 +401,10 @@
 
     <div class="container">
         <header>
+            <!-- Go Back Button -->
+            
+
+
             <h1>Book Your Turf</h1>
             <p class="page-description">Select your preferred date and time slot to book {{ turf.name }}</p>
         </header>
@@ -434,139 +476,28 @@
                         </span>
                     </div>
                     {% empty %}
-                        <p>Please select a date to see available slots.</p> 
+                    <p>Please select a date to see available slots.</p>
                     {% endfor %}
                 </div>
-
-                <!-- <div id="dateDisplay" style="margin-bottom: 1rem; font-weight: 600;"></div>
-
-                <div class="slots-grid" id="slotsContainer"> -->
-                    <!-- Slots will be populated by JavaScript -->
-                    <!--<div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
-                        <i class="far fa-calendar-alt"
-                            style="font-size: 3rem; color: var(--gray); margin-bottom: 1rem;"></i>
-                        <h3>Select a date to view available slots</h3>
-                    </div>
-                </div>
-            </div> -->
+            </div>
         </div>
     </div>
 
     <!-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const dateInput = document.getElementById('date');
-            const startTimeInput = document.getElementById('start_time');
-            const endTimeInput = document.getElementById('end_time');
-            const slotsContainer = document.getElementById('slotsContainer');
-            const dateDisplay = document.getElementById('dateDisplay');
-            const errorMessage = document.getElementById('errorMessage');
-            
-            // Set default time values based on turf opening hours
-            startTimeInput.value = '{{ turf.opening_time|time:"H:i" }}';
-            endTimeInput.value = '{{ turf.closing_time|time:"H:i" }}';
-            
-            // Date input change handler
-            dateInput.addEventListener('change', function() {
-                const selectedDate = new Date(this.value);
-                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                dateDisplay.textContent = selectedDate.toLocaleDateString('en-US', options);
-                
-                // In a real implementation, you would fetch available slots for this date
-                // This is a mock implementation for demonstration
-                if (this.value) {
-                    fetchAvailableSlots(this.value);
-                }
-            });
-            
-            // Mock function to fetch available slots
-            function fetchAvailableSlots(date) {
-                // Show loading state
-                slotsContainer.innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
-                        <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
-                        <p>Loading available slots...</p>
-                    </div>
-                `;
-                
-                // Simulate API call delay
-                setTimeout(() => {
-                    // Mock data - in a real app, this would come from your Django backend
-                    const mockSlots = [
-                        { start: '10:00', end: '12:00', price: 1000 },
-                        { start: '14:00', end: '16:00', price: 1000 },
-                        { start: '17:00', end: '19:00', price: 1200 },
-                        { start: '20:00', end: '22:00', price: 1500 }
-                    ];
-                    
-                    if (mockSlots.length > 0) {
-                        slotsContainer.innerHTML = '';
-                        mockSlots.forEach(slot => {
-                            const slotElement = document.createElement('div');
-                            slotElement.className = 'slot-card';
-                            slotElement.innerHTML = `
-                                <h3>${slot.start} - ${slot.end}</h3>
-                                <p class="slot-price">₹${slot.price} (${calculateHours(slot.start, slot.end)} hrs)</p>
-                                <form method="post" action="">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="turf" value="{{ turf.id }}">
-                                    <input type="hidden" name="date" value="${date}">
-                                    <input type="hidden" name="start_time" value="${slot.start}">
-                                    <input type="hidden" name="end_time" value="${slot.end}">
-                                    <input type="hidden" name="predefined_slot" value="true">
-                                    <button type="submit">
-                                        <i class="fas fa-calendar-plus"></i> Book This Slot
-                                    </button>
-                                </form>
-                            `;
-                            slotsContainer.appendChild(slotElement);
-                        });
-                    } else {
-                        slotsContainer.innerHTML = `
-                            <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
-                                <i class="far fa-calendar-times" style="font-size: 3rem; color: var(--gray); margin-bottom: 1rem;"></i>
-                                <h3>No available slots for this date</h3>
-                                <p>Please try another date</p>
-                            </div>
-                        `;
-                    }
-                }, 1000);
+        // Go back function
+        function goBack() {
+            // Try to go back in history, if not possible redirect to home
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "/"; // Replace with your home URL
             }
-            
-            // Calculate hours between two times
-            function calculateHours(start, end) {
-                const [startH, startM] = start.split(':').map(Number);
-                const [endH, endM] = end.split(':').map(Number);
-                return ((endH * 60 + endM) - (startH * 60 + startM)) / 60;
-            }
-            
-            // Form validation
-            const bookingForm = document.querySelector('form');
-            if (bookingForm) {
-                bookingForm.addEventListener('submit', function(e) {
-                    const startTime = startTimeInput.value;
-                    const endTime = endTimeInput.value;
-                    
-                    if (startTime >= endTime) {
-                        e.preventDefault();
-                        showError('End time must be after start time');
-                        return;
-                    }
-                    
-                    // Additional validation can be added here
-                });
-            }
-            
-            function showError(message) {
-                errorMessage.style.display = 'flex';
-                document.getElementById('errorText').textContent = message;
-                setTimeout(() => {
-                    errorMessage.style.display = 'none';
-                }, 5000);
-            }
-            
-            // Trigger date change on load if date is set
-            if (dateInput.value) {
-                dateInput.dispatchEvent(new Event('change'));
+        }
+
+        // Optional: Add keyboard shortcut (Esc key) to go back
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                goBack();
             }
         });
     </script> -->

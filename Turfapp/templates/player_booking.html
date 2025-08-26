@@ -922,7 +922,11 @@
             </a>
 
             <ul class="nav-links">
-                <li><a href="{% url 'home' %}">Home</a></li>
+                {% if request.user.role == 'admin' %}
+                <li><a href="{% url 'admin_dashboard' %}">home</a></li>
+                {%else%}
+                <li><a href="{% url 'home' %}">home</a></li>
+                {% endif %}
                 <li><a href="{% url 'turfs' %}">Turfs</a></li>
                 <li><a href="{% url 'player_booking' %}" class="active">My Bookings</a></li>
                 <li><a href="{% url 'profile' %}">Profile</a></li>
@@ -1172,7 +1176,7 @@
         </div>
     </footer>
 
-    <script>
+    <!-- <script>
         // Filter functionality
         document.addEventListener('DOMContentLoaded', function() {
             const statusFilter = document.getElementById('statusFilter');
@@ -1262,7 +1266,7 @@
                 });
             });
         });
-    </script>
+    </script> -->
 </body>
 
 </html>

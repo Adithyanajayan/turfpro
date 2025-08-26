@@ -28,7 +28,7 @@ urlpatterns = [
     path("login/",views.Login,name="login"),
     path("home/",views.Home,name="home"),
     path("turfs/",views.Turfs,name="turfs"),
-    path("turfregistration/",views.Turf_Reg,name="turfreg"),
+    path("turfregistration/",views.Turf_Reg,name="turf_reg"),
     path("logout/",views.Logout,name='logout'),
     path("profile/",views.Profile,name='profile'),
     path("turf_booking/<int:id>",views.Turf_booking,name='turf_booking'),
@@ -51,6 +51,7 @@ urlpatterns = [
     path("unblock_user/<int:user_id>/", views.unblock_user, name="unblock_user"),
     path("download_receipt/<int:booking_id>/", views.download_receipt, name="download_receipt"),
     path('turf/<int:turf_id>/rate/<int:value>/', views.rate_turf, name='rate_turf'),
+    path("cancel/",views.cancel,name='cancel'),
 
 
     

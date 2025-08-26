@@ -269,7 +269,11 @@
             <button class="edit-btn" id="editToggleBtn">
                 <i class="fas fa-pencil-alt"></i>
             </button>
+            {% if request.user.profile_pic and request.user.profile_pic.url %}
+            <img src="{{request.user.profile_pic.url}}" alt="Profile" class="profile-pic" id="profilePic">
+            {% else %}
             <img src="https://ui-avatars.com/api/?name={{ request.user.first_name }}+{{ request.user.last_name }}&background=3a5a78&color=fff" alt="Profile" class="profile-pic" id="profilePic">
+            {% endif %}
             <h2 id="fullName">{{request.user.first_name|capfirst}} {{request.user.last_name|capfirst}}</h2>
             <div class="role-badge" id="roleBadge">{{request.user.role}}</div>
         </div>

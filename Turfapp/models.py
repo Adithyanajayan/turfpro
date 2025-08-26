@@ -27,6 +27,7 @@ class UserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser,PermissionsMixin):
     
     phone = models.CharField(max_length=10,unique=True)
+    profile_pic = models.ImageField(upload_to='profile_images/', null=True, blank=True)
     first_name = models.CharField(max_length=15)
     last_name = models.CharField(max_length=15)
     role = models.CharField(max_length=10, choices=[('player', 'Player'), ('owner', 'Owner'), ('admin', 'admin')],default='player')
@@ -54,7 +55,7 @@ class SportType(models.Model):
 
 class Turf_details(models.Model):
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='turf')
-    name = models.CharField(max_length=20,unique='true')
+    name = models.CharField(max_length=20)
     location = models.CharField(max_length=50)
     price = models.CharField(max_length=5)
     opening_time = models.TimeField(null=True, blank=True)
@@ -89,10 +90,17 @@ class Turf_details(models.Model):
     
     status = models.CharField(max_length=10,choices=STATUS_CHOICES,default='enabled')
     
+    @property
     def average_rating(self):
         ratings = self.ratings.all()
         return round(sum(r.value for r in ratings) / ratings.count(), 1) if ratings.exists() else 0
 
+    
+    def toggle_status(self):
+        self.status = 'disabled' if self.status == 'enabled' else 'enabled'
+        self.save()
+        return self.status
+    
 class Rating(models.Model):
     turf = models.ForeignKey(Turf_details, related_name="ratings", on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
@@ -100,12 +108,6 @@ class Rating(models.Model):
 
     class Meta:
         unique_together = ('turf', 'user')
-    
-    def toggle_status(self):
-        self.status = 'disabled' if self.status == 'enabled' else 'enabled'
-        self.save()
-        return self.status
-    
     
     
 class Booking(models.Model):
