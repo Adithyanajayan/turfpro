@@ -531,6 +531,8 @@ def download_receipt(request, booking_id):
     p.save()
     return response
 
+
+
 def rate_turf(request, turf_id, value):
     turf = get_object_or_404(Turf_details, id=turf_id)
     if request.user.is_authenticated:

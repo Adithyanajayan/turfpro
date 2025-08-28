@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Receipt</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .receipt-container {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .receipt-header {
+            background: #4a6bdf;
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .receipt-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .receipt-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .receipt-icon {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 28px;
+        }
+        
+        .receipt-body {
+            padding: 25px;
+        }
+        
+        .receipt-info {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #ddd;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: #555;
+            font-size: 15px;
+        }
+        
+        .info-value {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .items-table th {
+            text-align: left;
+            padding: 10px 5px;
+            border-bottom: 1px solid #eee;
+            color: #777;
+            font-weight: normal;
+            font-size: 14px;
+        }
+        
+        .items-table td {
+            padding: 10px 5px;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .items-table .text-right {
+            text-align: right;
+        }
+        
+        .total-section {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed #ddd;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .grand-total {
+            font-size: 18px;
+            color: #4a6bdf;
+        }
+        
+        .payment-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            font-size: 14px;
+            border-left: 4px solid #4a6bdf;
+        }
+        
+        .payment-info p {
+            margin-bottom: 5px;
+        }
+        
+        .receipt-footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 14px;
+            background: #f8f9fa;
+        }
+        
+        .barcode {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: white;
+        }
+        
+        .barcode img {
+            max-width: 180px;
+            height: auto;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-print {
+            background: #4a6bdf;
+            color: white;
+        }
+        
+        .btn-download {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 480px) {
+            .receipt-container {
+                border-radius: 0;
+            }
+            
+            .receipt-header, .receipt-body {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+            }
+            
+            .receipt-container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+            
+            .action-buttons {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt-container">
+        <div class="receipt-header">
+            <div class="receipt-icon">
+                <i class="fas fa-receipt"></i>
+            </div>
+            <h1>PAYMENT RECEIPT</h1>
+            <p>Thank you for your purchase</p>
+        </div>
+        
+        <div class="receipt-body">
+            <div class="receipt-info">
+                <div class="info-row">
+                    <span class="info-label">Receipt No:</span>
+                    <span class="info-value">#R-123456789</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Date & Time:</span>
+                    <span class="info-value">Oct 15, 2023 - 14:30</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Payment Method:</span>
+                    <span class="info-value">Credit Card</span>
+                </div>
+            </div>
+            
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Qty</th>
+                        <th class="text-right">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Premium Website Template</td>
+                        <td>1</td>
+                        <td class="text-right">$49.99</td>
+                    </tr>
+                    <tr>
+                        <td>Customization Service</td>
+                        <td>1</td>
+                        <td class="text-right">$29.99</td>
+                    </tr>
+                    <tr>
+                        <td>Hosting Package (1 Year)</td>
+                        <td>1</td>
+                        <td class="text-right">$89.99</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="total-section">
+                <div class="total-row">
+                    <span>Subtotal:</span>
+                    <span>$169.97</span>
+                </div>
+                <div class="total-row">
+                    <span>Tax (10%):</span>
+                    <span>$17.00</span>
+                </div>
+                <div class="total-row grand-total">
+                    <span>TOTAL:</span>
+                    <span>$186.97</span>
+                </div>
+            </div>
+            
+            <div class="payment-info">
+                <p><strong>Payment Status: </strong> <span style="color: #28a745;">Completed</span></p>
+                <p><strong>Card Ending: </strong> **** **** **** 1234</p>
+                <p><strong>Auth Code: </strong> 7H8J9K</p>
+            </div>
+            
+            <div class="barcode">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/QR_Code_Example.svg/1200px-QR_Code_Example.svg.png" alt="Transaction Barcode" style="max-width: 100px;">
+            </div>
+        </div>
+        
+        <div class="receipt-footer">
+            <p>Thank you for your business!</p>
+            <p>For any inquiries, contact: support@example.com</p>
+            <p>© 2023 Your Company Name. All rights reserved.</p>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn btn-print" onclick="window.print()">
+                <i class="fas fa-print"></i> Print Receipt
+            </button>
+            <button class="btn btn-download">
+                <i class="fas fa-download"></i> Download PDF
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Simple script to simulate PDF download
+        document.querySelector('.btn-download').addEventListener('click', function() {
+            alert('Receipt download functionality would be implemented here. In a real application, this would generate a PDF file.');
+        });
+    </script>
+</body>
+</html>

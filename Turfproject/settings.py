@@ -57,7 +57,7 @@ ROOT_URLCONF = "Turfproject.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -135,3 +135,14 @@ CRONJOBS = [
     ('0 0 * * *', 'booking.cron.update_booking_status'),  
     # runs every midnight
 ]
+
+# Development (console backend just prints email in terminal)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# For production, configure real SMTP (example with Gmail)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'adithyanar.official@gmail.com'
+EMAIL_HOST_PASSWORD = 'ytbp ueof ntck xhtd'
