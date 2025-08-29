@@ -3,6 +3,8 @@ from datetime import datetime,date,timedelta
 from django.utils import timezone
 from django.db.models import Count
 from django.http import JsonResponse
+from itertools import chain
+from django.utils.timezone import now
 
 def Landing(request):
     return render(request,"landing.html")
@@ -74,6 +76,7 @@ from django.contrib.auth import authenticate, login
 
 def Login(request):
     if request.method == 'POST':
+        update_boooking_status()
          
         email = request.POST['email']
         password = request.POST['password']
@@ -322,9 +325,39 @@ def Owner_dashboard(request):
 @login_required
 def Booking_history(request):
     user_id = request.user.id
+
     bookings = Booking.objects.filter(user_id=user_id).order_by('date', 'start_time')
-    cancelled = Cancelled_booking.objects.filter(user_id=request.user.id).order_by('cancelled_at')
-    return render(request,'player_booking.html',{'bookings':bookings,'cancelled':cancelled})
+    cancelled = Cancelled_booking.objects.filter(user_id=user_id).order_by('cancelled_at')
+
+    merged = list(chain(bookings, cancelled))
+
+    # --- Get filters from GET request ---
+    status_filter = request.GET.get('statusFilter', 'all')
+    date_filter = request.GET.get('dateFilter', 'recent')
+
+    # --- Apply Status Filter ---
+    if status_filter == "upcoming":
+        merged = [b for b in merged if hasattr(b, 'date') and b.date >= now().date()]
+    elif status_filter == "completed":
+        merged = [b for b in merged if isinstance(b, Booking) and b.status == "completed"]
+    elif status_filter == "cancelled":
+        merged = [c for c in merged if hasattr(c, 'cancelled_at')]
+    # "all" → show everything
+
+    # --- Apply Date Sorting ---
+    if date_filter == "recent":
+        merged = sorted(
+            merged,
+            key=lambda x: getattr(x, 'date', getattr(x, 'cancelled_at', None)),
+            reverse=True
+        )
+    elif date_filter == "oldest":
+        merged = sorted(
+            merged,
+            key=lambda x: getattr(x, 'date', getattr(x, 'cancelled_at', None))
+        )
+
+    return render(request, 'player_booking.html', {"bookings": merged})
 
 @login_required
 def Owner_turf(request):
@@ -505,32 +538,168 @@ def unblock_user(request,user_id):
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.units import inch
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+import os
 from .models import Booking
 
 def download_receipt(request, booking_id):
     booking = Booking.objects.get(id=booking_id)
-
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'attachment; filename="receipt_{booking.id}.pdf"'
-
-    p = canvas.Canvas(response, pagesize=letter)
-    p.setFont("Helvetica-Bold", 16)
-    p.drawString(200, 750, "Turf Booking Receipt")
-
-    p.setFont("Helvetica", 12)
-    p.drawString(100, 700, f"Booking ID: {booking.id}")
-    p.drawString(100, 680, f"User: {booking.user.first_name} {booking.user.last_name}")
-    p.drawString(100, 660, f"Turf: {booking.turf.name}")
-    p.drawString(100, 640, f"Date: {booking.date}")
-    p.drawString(100, 620, f"Time: {booking.start_time} - {booking.end_time}")
-    p.drawString(100, 600, f"Amount Paid: ₹{booking.total_price}")
-
-    p.drawString(100, 560, "Thank you for booking with us!")
-
-    p.showPage()
-    p.save()
+    
+    # HTTP response setup
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="receipt_{booking.id}.pdf"'
+    
+    # Create the PDF object
+    doc = SimpleDocTemplate(response, pagesize=letter,
+                            rightMargin=72, leftMargin=72,
+                            topMargin=72, bottomMargin=72)
+    
+    # Container for the 'Flowable' objects
+    elements = []
+    
+    # Styles
+    styles = getSampleStyleSheet()
+    
+    # Custom styles
+    title_style = ParagraphStyle(
+        'CustomTitle',
+        parent=styles['Heading1'],
+        fontSize=24,
+        spaceAfter=30,
+        textColor=colors.HexColor("#2E86C1"),
+        alignment=TA_CENTER
+    )
+    
+    heading_style = ParagraphStyle(
+        'CustomHeading',
+        parent=styles['Heading2'],
+        fontSize=16,
+        spaceAfter=12,
+        textColor=colors.HexColor("#2C3E50"),
+        alignment=TA_LEFT
+    )
+    
+    normal_style = ParagraphStyle(
+        'CustomNormal',
+        parent=styles['BodyText'],
+        fontSize=12,
+        spaceAfter=12,
+        textColor=colors.HexColor("#2C3E50"),
+        alignment=TA_LEFT
+    )
+    
+    highlight_style = ParagraphStyle(
+        'CustomHighlight',
+        parent=styles['BodyText'],
+        fontSize=14,
+        spaceAfter=12,
+        textColor=colors.HexColor("#27AE60"),
+        alignment=TA_LEFT
+    )
+    
+    footer_style = ParagraphStyle(
+        'CustomFooter',
+        parent=styles['BodyText'],
+        fontSize=10,
+        spaceAfter=6,
+        textColor=colors.HexColor("#7F8C8D"),
+        alignment=TA_CENTER
+    )
+    
+    # Title
+    title = Paragraph("TURF BOOKING RECEIPT", title_style)
+    elements.append(title)
+    elements.append(Spacer(1, 0.2*inch))
+    
+    # Booking Information Table
+    booking_data = [
+        ["Booking ID:", str(booking.id)],
+        ["Customer:", f"{booking.user.first_name} {booking.user.last_name}"],
+        ["Turf:", booking.turf.name],
+        ["Date:", str(booking.date)],
+        ["Time Slot:", f"{booking.start_time} - {booking.end_time}"],
+    ]
+    
+    booking_table = Table(booking_data, colWidths=[1.5*inch, 3*inch])
+    booking_table.setStyle(TableStyle([
+        ('FONT', (0, 0), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, -1), 12),
+        ('BACKGROUND', (0, 0), (0, -1), colors.HexColor("#EAEDED")),
+        ('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor("#2C3E50")),
+        ('TEXTCOLOR', (1, 0), (1, -1), colors.HexColor("#2C3E50")),
+        ('ALIGN', (0, 0), (0, -1), 'LEFT'),
+        ('ALIGN', (1, 0), (1, -1), 'LEFT'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('LINEABOVE', (0, 0), (-1, 0), 1, colors.HexColor("#D0D3D4")),
+        ('LINEBELOW', (0, -1), (-1, -1), 1, colors.HexColor("#D0D3D4")),
+        ('BOX', (0, 0), (-1, -1), 1, colors.HexColor("#D0D3D4")),
+        ('PADDING', (0, 0), (-1, -1), 8),
+    ]))
+    
+    elements.append(booking_table)
+    elements.append(Spacer(1, 0.3*inch))
+    
+    # Payment Information
+    payment_heading = Paragraph("Payment Details", heading_style)
+    elements.append(payment_heading)
+    
+    payment_data = [
+        ["Description", "Amount (INR)"],
+        ["Turf Booking Fee", f"INR {booking.total_price}"],
+        ["Tax", "INR 0"],  # You can modify this based on your tax calculation
+        ["Total Amount", f"INR {booking.total_price}"]
+    ]
+    
+    payment_table = Table(payment_data, colWidths=[3.5*inch, 1.5*inch])
+    payment_table.setStyle(TableStyle([
+        ('FONT', (0, 0), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, -1), 12),
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor("#2E86C1")),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor("#F8F9F9")),
+        ('TEXTCOLOR', (0, 1), (-1, -2), colors.HexColor("#2C3E50")),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('LINEABOVE', (0, 0), (-1, 0), 1, colors.HexColor("#2E86C1")),
+        ('LINEBELOW', (0, 0), (-1, 0), 1, colors.HexColor("#2E86C1")),
+        ('LINEABOVE', (0, -1), (-1, -1), 1, colors.HexColor("#2E86C1")),
+        ('GRID', (0, 0), (-1, -1), 1, colors.HexColor("#D0D3D4")),
+        ('PADDING', (0, 0), (-1, -1), 8),
+    ]))
+    
+    elements.append(payment_table)
+    elements.append(Spacer(1, 0.4*inch))
+    
+    # Thank you message
+    thank_you = Paragraph("Thank you for choosing our turf facility! We hope you enjoy your game.", highlight_style)
+    elements.append(thank_you)
+    elements.append(Spacer(1, 0.2*inch))
+    
+    # Additional information
+    info_text = Paragraph("Please bring this receipt with you for verification at the time of your booking.", normal_style)
+    elements.append(info_text)
+    elements.append(Spacer(1, 0.4*inch))
+    
+    # Footer
+    footer1 = Paragraph("For any queries or support, please contact:", footer_style)
+    footer2 = Paragraph("support@turfsystem.com | +91 98765 43210", footer_style)
+    footer3 = Paragraph("Business Hours: 6:00 AM - 10:00 PM (All days)", footer_style)
+    
+    elements.append(footer1)
+    elements.append(footer2)
+    elements.append(footer3)
+    
+    # Generate PDF
+    doc.build(elements)
+    
     return response
-
 
 
 def rate_turf(request, turf_id, value):
@@ -552,3 +721,8 @@ def cancel(request):
     if referer:
         return redirect(referer)
     return redirect(resolve_url('home'))
+
+def update_boooking_status():
+    bookings = Booking.objects.all()
+    for booking in bookings:
+        booking.update_status()
