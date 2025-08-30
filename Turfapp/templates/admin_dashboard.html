@@ -17,13 +17,15 @@
             --warning: #fdcb6e;
             --danger: #d63031;
             --dark: #2d3436;
-            --light: #f5f6fa;
+            --light: #f8fafc;
             --card-bg: #1e272e;
             --body-bg: #0f1519;
+            --gradient: linear-gradient(135deg, #1E90FF 0%, #0A2A43 100%);
         }
 
         body {
-            background-color: var(--body-bg);
+            background: var(--gradient);
+            box-shadow: var(--shadow);
             color: var(--light);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow-x: hidden;
@@ -706,33 +708,7 @@
                             </div>
                         </div>
                         {% endfor %}
-                        <div class="col-md-3 mb-4">
-                            <div class="turf-card">
-                                <img src="https://images.unsplash.com/photo-1543357480-c60d400e2ef9" alt="Turf">
-                                <div class="turf-card-overlay">
-                                    <h5 class="mb-1">Sports Arena</h5>
-                                    <small class="text-muted">Chicago</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-4">
-                            <div class="turf-card">
-                                <img src="https://images.unsplash.com/photo-1575361204480-aadea25e6e68" alt="Turf">
-                                <div class="turf-card-overlay">
-                                    <h5 class="mb-1">Elite Football</h5>
-                                    <small class="text-muted">Los Angeles</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 mb-4">
-                            <div class="turf-card">
-                                <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20" alt="Turf">
-                                <div class="turf-card-overlay">
-                                    <h5 class="mb-1">City Complex</h5>
-                                    <small class="text-muted">Miami</small>
-                                </div>
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
             </div>

@@ -139,7 +139,7 @@ def Turfs(request):
     if selected_sort == "price":
         turfs = turfs.order_by("price")
     elif selected_sort == "rating":
-        turfs = turfs.order_by("-ratings")   # ✅ correct field
+        turfs = turfs.order_by("ratings")   # ✅ correct field
 
     sports = SportType.objects.all()
 
@@ -324,6 +324,7 @@ def Owner_dashboard(request):
     return render(request,"owner_dashboard.html",{'booking_today':booking_today,'upcoming_booking':upcoming_booking,"revenue":revenue,'no_booking':no_booking,'no_cancelled':no_cancelled})
 @login_required
 def Booking_history(request):
+    update_boooking_status()
     user_id = request.user.id
 
     bookings = Booking.objects.filter(user_id=user_id).order_by('date', 'start_time')

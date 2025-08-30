@@ -9,21 +9,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <style>
-        :root {
-            --primary: #4CAF50;
-            --primary-dark: #45a049;
-            --primary-light: #e8f5e9;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --gray: #6c757d;
-            --error: #e74c3c;
-            --warning: #ff9800;
-            --info: #2196f3;
-            --shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.12);
-            --radius: 12px;
-            --transition: all 0.3s ease;
-        }
+      :root {
+    --primary: #1E90FF;        /* Main Blue */
+    --primary-dark: #0A2A43;   /* Dark Navy / Blackish Blue */
+    --primary-light: #E6F2FF;  /* Very Light Blue */
+    --light: #F8FAFC;          /* Subtle light background */
+    --dark: #121212;           /* Deep Black */
+    --gray: #6C7A89;           /* Muted Blue-Gray */
+    --error: #FF4C4C;          /* Bright Red for errors (kept for visibility) */
+    --warning: #FFC107;        /* Warm Yellow (still stands out) */
+    --info: #2196F3;           /* Sky Blue */
+    --shadow: 0 5px 15px rgba(30, 144, 255, 0.15);
+    --shadow-hover: 0 8px 25px rgba(30, 144, 255, 0.25);
+    --radius: 12px;
+    --transition: all 0.3s ease;
+    --gradient: linear-gradient(135deg, #1E90FF 0%, #0A2A43 100%);
+
+}
+
 
         * {
             margin: 0;
@@ -40,7 +43,7 @@
 
         /* Header Styles */
         header {
-            background-color: white;
+            background: var(--gradient);
             box-shadow: var(--shadow);
             position: sticky;
             top: 0;
@@ -61,7 +64,7 @@
             align-items: center;
             font-size: 24px;
             font-weight: 700;
-            color: var(--primary);
+            color: white;
             text-decoration: none;
         }
 
@@ -81,11 +84,11 @@
 
         .nav-links a {
             text-decoration: none;
-            color: var(--dark);
-            font-weight: 500;
-            transition: var(--transition);
-            position: relative;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            transition: color 0.3s;
             padding: 5px 0;
+            position: relative;
         }
 
         .nav-links a::after {
@@ -970,18 +973,18 @@
                     </option>
                 </select>
 
-                <button type="submit">Apply</button>
+                <button class="filter-control" type="submit">Apply</button>
             </form>
 
         </div>
 
         <!-- Booking Tabs -->
-        <div class="booking-tabs">
-            <div class="tab active" data-tab="all">All Bookings</div>
-            <div class="tab" data-tab="upcoming">Upcoming</div>
-            <div class="tab" data-tab="completed">Completed</div>
-            <div class="tab" data-tab="cancelled">Cancelled</div>
-        </div>
+        <!-- <div class="booking-tabs">
+            <div class="tab active" statusFilter="all">All Bookings</div>
+            <div class="tab" statusFilter="upcoming">Upcoming</div>
+            <div class="tab" statusFilter="completed">Completed</div>
+            <div class="tab" statusFilter="cancelled">Cancelled</div>
+        </div> -->
 
         <!-- Booking List -->
         <div class="booking-list" id="bookingList">
@@ -1017,7 +1020,7 @@
                         </div>
                         <div class="meta-item">
                             <span class="meta-label"><i class="fas fa-users"></i> Players</span>
-                            <span class="meta-value">12/14</span>
+                            <span class="meta-value">{{booking.turf.player_capacity}}</span>
                         </div>
                     </div>
 
@@ -1034,6 +1037,15 @@
                             <span class="meta-label"><i class="fas fa-hourglass-half"></i> Duration</span>
                             <span class="meta-value">{{ booking.duration_hours }} hours</span>
                         </div>
+                         {% if booking.status == 'cancelled' %}
+                        <div class="booking-meta">
+                            <div class="meta-item">
+                                <span class="meta-label"><i class="fas fa-clock"></i> Cancelled At</span>
+                                <span class="meta-value">{{ booking.cancelled_at|date:"M d, Y H:i" }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                       
                     </div>
                 </div>
                 <div class="booking-actions">
@@ -1070,7 +1082,7 @@
             {% endfor %}
 
             <!-- Cancelled Booking Cards -->
-           
+
             <!-- Empty State (hidden by default) -->
             <div class="empty-state" id="emptyState" style="display: none;">
                 <i class="far fa-calendar-check"></i>

@@ -104,7 +104,7 @@ class Turf_details(models.Model):
 class Rating(models.Model):
     turf = models.ForeignKey(Turf_details, related_name="ratings", on_delete=models.CASCADE)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    value = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])  # rating 1–5
+    value = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)],default=0)  # rating 1–5
 
     class Meta:
         unique_together = ('turf', 'user')
@@ -130,10 +130,12 @@ class Booking(models.Model):
     
     def update_status(self):
         
-        from datetime import date
-        today = date.today()
+        from datetime import datetime
+        
+        now = datetime.now()
+        booking_datetime = datetime.combine(self.date, self.end_time)
 
-        if self.date <= today :
+        if booking_datetime <= now  :
             if self.status == 'confirmed':
                 self.status = 'completed'
             elif self.status == 'pending':

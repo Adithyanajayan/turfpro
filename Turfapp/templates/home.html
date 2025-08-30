@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,15 +8,25 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #4CAF50;
-            --primary-dark: #45a049;
-            --primary-light: #e8f5e9;
+            --primary: #1E90FF;
+            /* Main Blue */
+            --primary-dark: #0A2A43;
+            /* Dark Navy / Blackish Blue */
+            --primary-light: #E6F2FF;
+            /* Very Light Blue */
             --light: #f8f9fa;
-            --dark: #212529;
+            /* Neutral light background */
+            --dark: #121212;
+            /* Deep Black */
             --gray: #6c757d;
-            --error: #e74c3c;
-            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            /* Neutral Gray */
+            --error: #ff4c4c;
+            /* Bright Red (for errors, contrast) */
+            --shadow: 0 5px 15px rgba(30, 144, 255, 0.15);
+            /* Blue-tinted shadow */
+            --gradient: linear-gradient(135deg, #1E90FF 0%, #0A2A43 100%);
         }
+
 
         * {
             margin: 0;
@@ -25,14 +36,14 @@
         }
 
         body {
-            background-color: #f5f5f5;
+            background-color: white;
             color: var(--dark);
             line-height: 1.6;
         }
 
         /* Header Styles */
         header {
-            background-color: white;
+            background: var(--gradient);
             box-shadow: var(--shadow);
             position: sticky;
             top: 0;
@@ -53,7 +64,7 @@
             align-items: center;
             font-size: 24px;
             font-weight: 700;
-            color: var(--primary);
+            color: white;
             text-decoration: none;
         }
 
@@ -73,9 +84,11 @@
 
         .nav-links a {
             text-decoration: none;
-            color: var(--dark);
+            color: rgba(255, 255, 255, 0.9);
             font-weight: 600;
             transition: color 0.3s;
+            padding: 5px 0;
+            position: relative;
         }
 
         .nav-links a:hover {
@@ -112,8 +125,8 @@
 
         /* Hero Section */
         .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
-                        url('https://images.unsplash.com/photo-1543357483-0670e0e5a73a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                url('https://images.unsplash.com/photo-1543357483-0670e0e5a73a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
             background-size: cover;
             background-position: center;
             color: white;
@@ -135,42 +148,139 @@
             font-size: 20px;
             margin-bottom: 30px;
         }
+.search-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 20px 0;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+}
 
-        .search-box {
-            background: white;
-            border-radius: 50px;
-            padding: 5px;
-            display: flex;
-            max-width: 600px;
-            margin: 0 auto;
-            box-shadow: var(--shadow);
-        }
+.search-input {
+    flex: 1;
+    max-width: 400px;
+    padding: 14px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--text-primary);
+    background: #ffffff;
+    transition: var(--transition);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
 
-        .search-box input {
-            flex: 1;
-            border: none;
-            padding: 15px 20px;
-            border-radius: 50px 0 0 50px;
-            font-size: 16px;
-            outline: none;
-        }
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+    transform: translateY(-1px);
+}
 
-        .search-box button {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 0 50px 50px 0;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+.search-input::placeholder {
+    color: #94a3b8;
+    font-weight: 300;
+}
 
-        .search-box button:hover {
-            background-color: var(--primary-dark);
-        }
+.search-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #fff;
+    text-decoration: none;
+    border-radius: var(--radius);
+    transition: var(--transition);
+    box-shadow: var(--shadow);
+    font-weight: 600;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
 
+.search-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.search-btn:hover {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+.search-btn:hover::before {
+    left: 100%;
+}
+
+.search-btn:active {
+    transform: translateY(0);
+    box-shadow: var(--shadow);
+}
+
+.search-btn i {
+    font-size: 18px;
+}
+
+/* Optional: Add search icon */
+.search-btn::after {
+    content: '🔍';
+    margin-left: 8px;
+    font-size: 16px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .search-box {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+    
+    .search-input {
+        width: 100%;
+        max-width: none;
+    }
+    
+    .search-btn {
+        width: 100%;
+    }
+}
+
+/* Loading state */
+.search-btn.loading {
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+.search-btn.loading::after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    border: 2px solid transparent;
+    border-top: 2px solid #fff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
         /* Features Section */
         .section {
             padding: 80px 5%;
@@ -371,8 +481,8 @@
 
         /* CTA Section */
         .cta {
-            background: linear-gradient(rgba(76, 175, 80, 0.9), rgba(76, 175, 80, 0.9)), 
-                        url('https://images.unsplash.com/photo-1543357483-0670e0e5a73a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+            background: linear-gradient(rgba(76, 175, 80, 0.9), rgba(76, 175, 80, 0.9)),
+                url('https://images.unsplash.com/photo-1543357483-0670e0e5a73a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
             background-size: cover;
             background-position: center;
             color: white;
@@ -485,19 +595,19 @@
             .hero h1 {
                 font-size: 36px;
             }
-            
+
             .hero p {
                 font-size: 18px;
             }
-            
+
             .nav-links {
                 display: none;
             }
-            
+
             .menu-toggle {
                 display: block;
             }
-            
+
             .nav-buttons {
                 display: none;
             }
@@ -507,7 +617,7 @@
             .hero {
                 padding: 80px 5%;
             }
-            
+
             .section {
                 padding: 60px 5%;
             }
@@ -517,24 +627,24 @@
             .hero h1 {
                 font-size: 28px;
             }
-            
+
             .search-box {
                 flex-direction: column;
                 border-radius: 10px;
                 padding: 10px;
             }
-            
+
             .search-box input {
                 border-radius: 5px;
                 margin-bottom: 10px;
             }
-            
+
             .search-box button {
                 border-radius: 5px;
                 width: 100%;
             }
         }
-        
+
         .alert-container {
             position: fixed;
             top: 20px;
@@ -578,11 +688,11 @@
         .alert i {
             font-size: 1.2rem;
         }
-
     </style>
 </head>
+
 <body>
-     {% if messages %}
+    {% if messages %}
     <div class="alert-container">
         {% for message in messages %}
         <div class="alert alert-{{ message.tags }}">
@@ -598,25 +708,25 @@
             {{ message }}
         </div>
         {% endfor %}
-        </div>
-        <script>
-    // Wait for the DOM to be fully loaded
-    document.addEventListener("DOMContentLoaded", function () {
-        // Select all alert elements
-        const alerts = document.querySelectorAll(".alert");
+    </div>
+    <script>
+        // Wait for the DOM to be fully loaded
+        document.addEventListener("DOMContentLoaded", function () {
+            // Select all alert elements
+            const alerts = document.querySelectorAll(".alert");
 
-        // Set a timeout to hide alerts after 2 seconds
-        setTimeout(() => {
-            alerts.forEach(alert => {
-                alert.style.transition = "opacity 0.5s ease";
-                alert.style.opacity = "0";
+            // Set a timeout to hide alerts after 2 seconds
+            setTimeout(() => {
+                alerts.forEach(alert => {
+                    alert.style.transition = "opacity 0.5s ease";
+                    alert.style.opacity = "0";
 
-                // Optional: Remove the element from DOM after fade out
-                setTimeout(() => alert.remove(), 500);
-            });
-        }, 2000);
-    });
-</script>
+                    // Optional: Remove the element from DOM after fade out
+                    setTimeout(() => alert.remove(), 500);
+                });
+            }, 2000);
+        });
+    </script>
     {% endif %}
 
     <!-- Header -->
@@ -626,19 +736,19 @@
                 <i class="fas fa-futbol"></i>
                 TurfPro
             </a>
-            
+
             <ul class="nav-links">
                 <li><a href="{% url 'home' %}">Home</a></li>
                 <li><a href="{% url 'turfs' %}">Turfs</a></li>
                 <li><a href="{% url 'player_booking' %}">Bookings</a></li>
                 <li><a href="#">Contact</a></li>
             </ul>
-            
+
             <div class="nav-buttons">
                 <a href="{% url 'logout' %}" class="btn btn-outline">Logout</a>
                 <a href="{% url 'profile' %}" class="btn btn-solid">Profile</a>
             </div>
-            
+
             <div class="menu-toggle">
                 <i class="fas fa-bars"></i>
             </div>
@@ -649,12 +759,13 @@
     <section class="hero">
         <div class="hero-content">
             <h1>Book Premium Sports Turfs in Minutes</h1>
-            <p>Find and reserve the best football, cricket, and multi-sport turfs near you with our easy-to-use platform</p>
-            
+            <p>Find and reserve the best football, cricket, and multi-sport turfs near you with our easy-to-use platform
+            </p>
+
             <div class="search-box">
-                <input type="text" placeholder="Search by location, sport, or turf name...">
-                <button type="submit">Search Turfs</button>
+                <a href="{% url 'turfs' %}" class="search-btn">Search Turfs</a>
             </div>
+
         </div>
     </section>
 
@@ -664,7 +775,7 @@
             <h2>Why Choose TurfPro?</h2>
             <p>We make sports turf booking simple, fast, and reliable for players and turf owners alike</p>
         </div>
-        
+
         <div class="features">
             <div class="feature-card">
                 <div class="feature-icon">
@@ -673,7 +784,7 @@
                 <h3>Easy Booking</h3>
                 <p>Book your favorite turfs in just a few clicks with our intuitive booking system.</p>
             </div>
-            
+
             <div class="feature-card">
                 <div class="feature-icon">
                     <i class="fas fa-map-marker-alt"></i>
@@ -681,7 +792,7 @@
                 <h3>Wide Selection</h3>
                 <p>Discover hundreds of quality turfs in your city with detailed information.</p>
             </div>
-            
+
             <div class="feature-card">
                 <div class="feature-icon">
                     <i class="fas fa-lock"></i>
@@ -689,7 +800,7 @@
                 <h3>Secure Payments</h3>
                 <p>Pay securely online with multiple payment options available.</p>
             </div>
-            
+
             <div class="feature-card">
                 <div class="feature-icon">
                     <i class="fas fa-clock"></i>
@@ -697,7 +808,7 @@
                 <h3>Real-Time Availability</h3>
                 <p>See up-to-date slot availability and get instant confirmation.</p>
             </div>
-            
+
             <div class="feature-card">
                 <div class="feature-icon">
                     <i class="fas fa-star"></i>
@@ -705,7 +816,7 @@
                 <h3>Verified Reviews</h3>
                 <p>Read genuine reviews from other players before booking.</p>
             </div>
-            
+
             <div class="feature-card">
                 <div class="feature-icon">
                     <i class="fas fa-headset"></i>
@@ -717,63 +828,6 @@
     </section>
 
     <!-- Popular Turfs Section -->
-    <section class="section turfs">
-        <div class="section-title">
-            <h2>Popular Turfs Near You</h2>
-            <p>Check out these highly-rated turfs that players in your area love</p>
-        </div>
-        
-        <div class="turf-grid">
-            <div class="turf-card">
-                <div class="turf-image">
-                    <img src="https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Football Turf">
-                </div>
-                <div class="turf-info">
-                    <h3>Elite Football Arena</h3>
-                    <div class="turf-meta">
-                        <span><i class="fas fa-map-marker-alt"></i> Downtown</span>
-                        <span><i class="fas fa-users"></i> 7v7</span>
-                    </div>
-                    <div class="turf-price">₹800/hr</div>
-                    <a href="#" class="btn btn-solid">Book Now</a>
-                </div>
-            </div>
-            
-            <div class="turf-card">
-                <div class="turf-image">
-                    <img src="https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Cricket Turf">
-                </div>
-                <div class="turf-info">
-                    <h3>Greenfield Cricket Ground</h3>
-                    <div class="turf-meta">
-                        <span><i class="fas fa-map-marker-alt"></i> Westside</span>
-                        <span><i class="fas fa-users"></i> Full Pitch</span>
-                    </div>
-                    <div class="turf-price">₹1200/hr</div>
-                    <a href="#" class="btn btn-solid">Book Now</a>
-                </div>
-            </div>
-            
-            <div class="turf-card">
-                <div class="turf-image">
-                    <img src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Multi-Sport Turf">
-                </div>
-                <div class="turf-info">
-                    <h3>SportsHub Multiplex</h3>
-                    <div class="turf-meta">
-                        <span><i class="fas fa-map-marker-alt"></i> East District</span>
-                        <span><i class="fas fa-users"></i> 5v5</span>
-                    </div>
-                    <div class="turf-price">₹600/hr</div>
-                    <a href="#" class="btn btn-solid">Book Now</a>
-                </div>
-            </div>
-        </div>
-        
-        <div style="text-align: center; margin-top: 40px;">
-            <a href="{% url 'turfs' %}" class="btn btn-outline">View All Turfs</a>
-        </div>
-    </section>
 
     <!-- Testimonials Section -->
     <section class="section testimonials">
@@ -781,11 +835,12 @@
             <h2>What Our Users Say</h2>
             <p>Hear from sports enthusiasts who've transformed their game with TurfPro</p>
         </div>
-        
+
         <div class="testimonial-grid">
             <div class="testimonial-card">
                 <div class="testimonial-text">
-                    <p>TurfPro has completely changed how I book football turfs. No more calling multiple places - I can see all available slots and book instantly. The turf quality has always been excellent too!</p>
+                    <p>TurfPro has completely changed how I book football turfs. No more calling multiple places - I can
+                        see all available slots and book instantly. The turf quality has always been excellent too!</p>
                 </div>
                 <div class="testimonial-author">
                     <div class="author-avatar">
@@ -797,10 +852,11 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="testimonial-card">
                 <div class="testimonial-text">
-                    <p>As a turf owner, TurfPro has helped me manage bookings seamlessly and increased my visibility. The dashboard makes it easy to handle reservations and payments all in one place.</p>
+                    <p>As a turf owner, TurfPro has helped me manage bookings seamlessly and increased my visibility.
+                        The dashboard makes it easy to handle reservations and payments all in one place.</p>
                 </div>
                 <div class="testimonial-author">
                     <div class="author-avatar">
@@ -812,10 +868,11 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="testimonial-card">
                 <div class="testimonial-text">
-                    <p>Our cricket team uses TurfPro every week to book practice sessions. The real-time availability and instant confirmation save us so much time compared to traditional booking methods.</p>
+                    <p>Our cricket team uses TurfPro every week to book practice sessions. The real-time availability
+                        and instant confirmation save us so much time compared to traditional booking methods.</p>
                 </div>
                 <div class="testimonial-author">
                     <div class="author-avatar">
@@ -836,7 +893,8 @@
         <p>Join thousands of sports enthusiasts who book their games effortlessly with TurfPro</p>
         <div style="display: flex; gap: 15px; justify-content: center;">
             <a href="register.html" class="btn btn-solid">Sign Up Now</a>
-            <a href="turfs.html" class="btn btn-outline" style="background-color: transparent; border-color: white; color: white;">Browse Turfs</a>
+            <a href="turfs.html" class="btn btn-outline"
+                style="background-color: transparent; border-color: white; color: white;">Browse Turfs</a>
         </div>
     </section>
 
@@ -845,7 +903,8 @@
         <div class="footer-content">
             <div class="footer-column">
                 <h3>TurfPro</h3>
-                <p>Your premier platform for booking sports turfs online. We connect players with quality turfs for unforgettable sporting experiences.</p>
+                <p>Your premier platform for booking sports turfs online. We connect players with quality turfs for
+                    unforgettable sporting experiences.</p>
                 <div class="social-links">
                     <a href="#"><i class="fab fa-facebook-f"></i></a>
                     <a href="#"><i class="fab fa-twitter"></i></a>
@@ -853,7 +912,7 @@
                     <a href="#"><i class="fab fa-linkedin-in"></i></a>
                 </div>
             </div>
-            
+
             <div class="footer-column">
                 <h3>Quick Links</h3>
                 <ul>
@@ -864,7 +923,7 @@
                     <li><a href="blog.html">Blog</a></li>
                 </ul>
             </div>
-            
+
             <div class="footer-column">
                 <h3>Support</h3>
                 <ul>
@@ -875,7 +934,7 @@
                     <li><a href="help.html">Help Center</a></li>
                 </ul>
             </div>
-            
+
             <div class="footer-column">
                 <h3>Contact Us</h3>
                 <ul>
@@ -885,7 +944,7 @@
                 </ul>
             </div>
         </div>
-        
+
         <div class="copyright">
             <p>&copy; 2023 TurfPro. All rights reserved.</p>
         </div>
@@ -916,4 +975,5 @@
         });
     </script> -->
 </body>
+
 </html>
