@@ -346,20 +346,41 @@
                                                 <input type="text" class="form-control" name="location"
                                                     value="{{turf.location}}" required>
                                             </div>
+                                            <!-- District Dropdown Field -->
                                             <div class="mb-3">
-                                                <label class="form-label">Price per Hour (₹)</label>
-                                                <input type="text" class="form-control" name="price" value="{{turf.location}}"
-                                                    required>
+                                                <label class="form-label">District*</label>
+                                                <select class="form-select" name="district" required>
+                                                    <option value="">Select District</option>
+                                                    <option value="Thiruvananthapuram" {% if turf.district == "Thiruvananthapuram" %}selected{% endif %}>Thiruvananthapuram</option>
+                                                    <option value="Kollam" {% if turf.district == "Kollam" %}selected{% endif %}>Kollam</option>
+                                                    <option value="Pathanamthitta" {% if turf.district == "Pathanamthitta" %}selected{% endif %}>Pathanamthitta</option>
+                                                    <option value="Alappuzha" {% if turf.district == "Alappuzha" %}selected{% endif %}>Alappuzha</option>
+                                                    <option value="Kottayam" {% if turf.district == "Kottayam" %}selected{% endif %}>Kottayam</option>
+                                                    <option value="Idukki" {% if turf.district == "Idukki" %}selected{% endif %}>Idukki</option>
+                                                    <option value="Ernakulam" {% if turf.district == "Ernakulam" %}selected{% endif %}>Ernakulam</option>
+                                                    <option value="Thrissur" {% if turf.district == "Thrissur" %}selected{% endif %}>Thrissur</option>
+                                                    <option value="Palakkad" {% if turf.district == "Palakkad" %}selected{% endif %}>Palakkad</option>
+                                                    <option value="Malappuram" {% if turf.district == "Malappuram" %}selected{% endif %}>Malappuram</option>
+                                                    <option value="Kozhikode" {% if turf.district == "Kozhikode" %}selected{% endif %}>Kozhikode</option>
+                                                    <option value="Wayanad" {% if turf.district == "Wayanad" %}selected{% endif %}>Wayanad</option>
+                                                    <option value="Kannur" {% if turf.district == "Kannur" %}selected{% endif %}>Kannur</option>
+                                                    <option value="Kasaragod" {% if turf.district == "Kasaragod" %}selected{% endif %}>Kasaragod</option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="mb-3">
+                                                <label class="form-label">Price per Hour (₹)</label>
+                                                <input type="text" class="form-control" name="price" value="{{turf.price}}"
+                                                    required>
+                                            </div>
+                                            <div class="mb-3">
                                                 <label class="form-label">Player Capacity</label>
                                                 <select class="form-select" name="player_capacity">
                                                     <option value="">Select capacity</option>
-                                                    <option value="5">5's</option>
-                                                    <option value="7" selected>7's</option>
-                                                    <option value="11">11's</option>
+                                                    <option value="5" {% if turf.player_capacity == 5 %}selected{% endif %}>5's</option>
+                                                    <option value="7" {% if turf.player_capacity == 7 %}selected{% endif %}>7's</option>
+                                                    <option value="11" {% if turf.player_capacity == 11 %}selected{% endif %}>11's</option>
                                                 </select>
                                             </div>
                                             <div class="mb-3">
@@ -394,23 +415,28 @@
                                             <div class="col-md-4">
                                                 <div class="feature-checkbox">
                                                     <input type="checkbox" id="football" name="sport_types"
-                                                        value="football">
+                                                        value="football" {% if "football" in turf.sport_types %}checked{% endif %}>
                                                     <label for="football">Football</label>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="feature-checkbox">
                                                     <input type="checkbox" id="cricket" name="sport_types"
-                                                        value="cricket">
+                                                        value="cricket" {% if "cricket" in turf.sport_types %}checked{% endif %}>
                                                     <label for="cricket">Cricket</label>
                                                 </div>
                                             </div>
-
-                                            
+                                            <div class="col-md-4">
+                                                <div class="feature-checkbox">
+                                                    <input type="checkbox" id="badminton" name="sport_types"
+                                                        value="badminton" {% if "badminton" in turf.sport_types %}checked{% endif %}>
+                                                    <label for="badminton">Badminton</label>
+                                                </div>
+                                            </div>
                                             <div class="col-md-4">
                                                 <div class="feature-checkbox">
                                                     <input type="checkbox" id="tennis" name="sport_types"
-                                                        value="tennis">
+                                                        value="tennis" {% if "tennis" in turf.sport_types %}checked{% endif %}>
                                                     <label for="tennis">Tennis</label>
                                                 </div>
                                             </div>
@@ -423,13 +449,14 @@
                                             <div class="col-md-4">
                                                 <div class="feature-checkbox">
                                                     <input type="checkbox" id="floodlight" name="has_floodlight"
-                                                        checked>
+                                                        {% if turf.has_floodlight %}checked{% endif %}>
                                                     <label for="floodlight">Floodlights</label>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="feature-checkbox">
-                                                    <input type="checkbox" id="water" name="has_drinking_water" checked>
+                                                    <input type="checkbox" id="water" name="has_drinking_water" 
+                                                        {% if turf.has_drinking_water %}checked{% endif %}>
                                                     <label for="water">Drinking Water</label>
                                                 </div>
                                             </div>
@@ -439,7 +466,7 @@
                                     <div class="mb-4">
                                         <label class="form-label">Additional Features</label>
                                         <textarea class="form-control" name="extra_features"
-                                            rows="3">Well-maintained grass, changing rooms available, parking space</textarea>
+                                            rows="3">{{turf.extra_features}}</textarea>
                                     </div>
 
                                     <div class="mb-4">
@@ -560,7 +587,7 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Toggle status button functionality
         document.getElementById('toggleStatusBtn').addEventListener('click', function () {
@@ -591,7 +618,7 @@
 
         // Form submission would be handled by the form action in a real app
         // This is just a demonstration of the UI
-    </script>
+    </script> -->
 </body>
 
 </html>

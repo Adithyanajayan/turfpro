@@ -370,6 +370,29 @@
                     <div id="locationError" class="error-message"></div>
                 </div>
 
+                <!-- New District Dropdown Field -->
+                <div class="form-group">
+                    <label for="district">District*</label>
+                    <select id="district" name="district" class="form-control" required>
+                        <option value="">Select District</option>
+                        <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+                        <option value="Kollam">Kollam</option>
+                        <option value="Pathanamthitta">Pathanamthitta</option>
+                        <option value="Alappuzha">Alappuzha</option>
+                        <option value="Kottayam">Kottayam</option>
+                        <option value="Idukki">Idukki</option>
+                        <option value="Ernakulam">Ernakulam</option>
+                        <option value="Thrissur">Thrissur</option>
+                        <option value="Palakkad">Palakkad</option>
+                        <option value="Malappuram">Malappuram</option>
+                        <option value="Kozhikode">Kozhikode</option>
+                        <option value="Wayanad">Wayanad</option>
+                        <option value="Kannur">Kannur</option>
+                        <option value="Kasaragod">Kasaragod</option>
+                    </select>
+                    <div id="districtError" class="error-message"></div>
+                </div>
+
                 <div class="form-group">
                     <label for="price">Price per Hour (₹)*</label>
                     <input type="text" id="price" name="price" class="form-control" placeholder="Enter price per hour"
@@ -490,8 +513,8 @@
             </form>
         </div>
     </div>
-<!-- 
-    <script>
+
+    <!-- <script>
         function previewImage(input) {
             const preview = document.getElementById('imagePreview');
             const file = input.files[0];
@@ -538,6 +561,14 @@
                 if (location.length < 5) {
                     document.getElementById('locationError').textContent = 'Please enter a valid location';
                     document.getElementById('locationError').style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Validate district
+                const district = document.getElementById('district').value;
+                if (!district) {
+                    document.getElementById('districtError').textContent = 'Please select a district';
+                    document.getElementById('districtError').style.display = 'block';
                     isValid = false;
                 }
                 

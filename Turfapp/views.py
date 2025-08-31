@@ -123,9 +123,13 @@ def Turfs(request):
     search_query = request.GET.get('q', '').strip()
     selected_sport = request.GET.get('sport', '').strip()
     selected_sort = request.GET.get('sort', '').strip()
+    selected_district = request.GET.get('district', '').strip()
     
     
     # 🔍 Search by location or name
+    if selected_district:
+        turfs = turfs.filter(district=selected_district)
+
     if search_query:
         turfs = turfs.filter(
             Q(location__icontains=search_query) | Q(name__icontains=search_query)
@@ -148,7 +152,9 @@ def Turfs(request):
         'sports': sports,
         'selected_sport': selected_sport,
         'selected_sort': selected_sort,
+        'selected_district': selected_district,
         'search_query': search_query,
+        
     })
 
 @login_required
@@ -167,6 +173,7 @@ def Turf_Reg(request):
         drinking_water = request.POST.get('has_drinking_water') == 'on'
         extra = request.POST.get('extra_features')
         capacity = request.POST.get('player_capacity')
+        district = request.POST.get('district')
         
         
 
@@ -174,7 +181,7 @@ def Turf_Reg(request):
             return render(request,"turf_reg.html")
         owner = request.user
         
-        turf=Turf_details.objects.create(name=name,location=location,owner=owner,price=price,opening_time=opening_time,closing_time=closing_time,length=length,width=width,image=image,has_floodlight=flood_light,has_drinking_water=drinking_water,player_capacity=capacity,extra_features=extra)
+        turf=Turf_details.objects.create(name=name,location=location,owner=owner,price=price,opening_time=opening_time,closing_time=closing_time,length=length,width=width,image=image,has_floodlight=flood_light,has_drinking_water=drinking_water,player_capacity=capacity,extra_features=extra,district=district)
         for sport_name in sport_types:
             sport_obj, created = SportType.objects.get_or_create(name=sport_name)
             turf.sport_types.add(sport_obj)
@@ -421,6 +428,7 @@ def manage_turf(request, turf_id):
         turf.width = request.POST.get("width") or None
         turf.opening_time = request.POST.get("opening_time")
         turf.closing_time = request.POST.get("closing_time")
+        turf.district = request.POST.get("district")
 
         # Sports available (multiple checkboxes)
         sports = request.POST.getlist("sport_types")

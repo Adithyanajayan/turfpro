@@ -678,6 +678,27 @@
                             <option value="rating" {% if selected_sort == "rating" %}selected{% endif %}>Rating</option>
                         </select>
                     </div>
+                    <div class="filter-group">
+    <label for="district">District</label>
+    <select id="district" name="district" class="filter-control">
+        <option value="">Select District</option>
+        <option value="Thiruvananthapuram" {% if selected_district == "Thiruvananthapuram" %}selected{% endif %}>Thiruvananthapuram</option>
+        <option value="Kollam" {% if selected_district == "Kollam" %}selected{% endif %}>Kollam</option>
+        <option value="Pathanamthitta" {% if selected_district == "Pathanamthitta" %}selected{% endif %}>Pathanamthitta</option>
+        <option value="Alappuzha" {% if selected_district == "Alappuzha" %}selected{% endif %}>Alappuzha</option>
+        <option value="Kottayam" {% if selected_district == "Kottayam" %}selected{% endif %}>Kottayam</option>
+        <option value="Idukki" {% if selected_district == "Idukki" %}selected{% endif %}>Idukki</option>
+        <option value="Ernakulam" {% if selected_district == "Ernakulam" %}selected{% endif %}>Ernakulam</option>
+        <option value="Thrissur" {% if selected_district == "Thrissur" %}selected{% endif %}>Thrissur</option>
+        <option value="Palakkad" {% if selected_district == "Palakkad" %}selected{% endif %}>Palakkad</option>
+        <option value="Malappuram" {% if selected_district == "Malappuram" %}selected{% endif %}>Malappuram</option>
+        <option value="Kozhikode" {% if selected_district == "Kozhikode" %}selected{% endif %}>Kozhikode</option>
+        <option value="Wayanad" {% if selected_district == "Wayanad" %}selected{% endif %}>Wayanad</option>
+        <option value="Kannur" {% if selected_district == "Kannur" %}selected{% endif %}>Kannur</option>
+        <option value="Kasaragod" {% if selected_district == "Kasaragod" %}selected{% endif %}>Kasaragod</option>
+    </select>
+</div>
+
 
                     <div class="filter-group search-box">
                         <label for="search">Search Turfs</label>

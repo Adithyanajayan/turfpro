@@ -79,6 +79,23 @@ class Turf_details(models.Model):
         null=True,
         blank=True
     )
+    DISTRICTS = [
+    ("Thiruvananthapuram", "Thiruvananthapuram"),
+    ("Kollam", "Kollam"),
+    ("Pathanamthitta", "Pathanamthitta"),
+    ("Alappuzha", "Alappuzha"),
+    ("Kottayam", "Kottayam"),
+    ("Idukki", "Idukki"),
+    ("Ernakulam", "Ernakulam"),
+    ("Thrissur", "Thrissur"),
+    ("Palakkad", "Palakkad"),
+    ("Malappuram", "Malappuram"),
+    ("Kozhikode", "Kozhikode"),
+    ("Wayanad", "Wayanad"),
+    ("Kannur", "Kannur"),
+    ("Kasaragod", "Kasaragod"),
+    ]
+    district = models.CharField(choices=DISTRICTS,null=True,max_length=20,blank=True)
 
     extra_features = models.TextField(
         null=True,
