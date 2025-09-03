@@ -73,7 +73,7 @@ urlpatterns = [
         auth_views.PasswordResetCompleteView.as_view(template_name="registration/password_reset_complete.html"),
         name='password_reset_complete'
     ),
-    
+    path('turf-performance-pie/', views.turf_performance_pie, name='turf_performance_pie'),
     
 
     

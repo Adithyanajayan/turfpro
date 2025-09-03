@@ -544,7 +544,7 @@ def unblock_user(request,user_id):
     return redirect(request.META.get('HTTP_REFERER', 'admin_usermanagement'))
 
 
-from django.http import HttpResponse
+from django.http import HttpResponse,Http404
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
@@ -558,7 +558,19 @@ import os
 from .models import Booking
 
 def download_receipt(request, booking_id):
-    booking = Booking.objects.get(id=booking_id)
+    booking = Booking.objects.filter(id=booking_id).first()
+    cancelled_booking = Cancelled_booking.objects.filter(id=booking_id).first()
+
+    if not booking and not cancelled_booking:
+        raise Http404("Booking not found")
+
+    # Decide which record to use
+    if booking:
+        booking = booking
+        status_text = booking.status.upper()
+    else:
+        booking = cancelled_booking
+        status_text = "CANCELLED"
     
     # HTTP response setup
     response = HttpResponse(content_type="application/pdf")
@@ -633,6 +645,7 @@ def download_receipt(request, booking_id):
         ["Turf:", booking.turf.name],
         ["Date:", str(booking.date)],
         ["Time Slot:", f"{booking.start_time} - {booking.end_time}"],
+        ["status:", status_text],
     ]
     
     booking_table = Table(booking_data, colWidths=[1.5*inch, 3*inch])
@@ -735,3 +748,42 @@ def update_boooking_status():
     bookings = Booking.objects.all()
     for booking in bookings:
         booking.update_status()
+import matplotlib
+matplotlib.use('Agg')  # Use a non-interactive backend
+import matplotlib.pyplot as plt
+        
+import matplotlib.pyplot as plt
+from io import BytesIO
+from django.http import HttpResponse
+from .models import Booking
+
+def turf_performance_pie(request):
+    # Count bookings grouped by turf name
+    from django.db.models import Count
+    turf_data = Booking.objects.values('turf__name').annotate(total=Count('id'))
+
+    # Extract labels & sizes
+    labels = [item['turf__name'] for item in turf_data]
+    sizes = [item['total'] for item in turf_data]
+
+    # If no data, return empty image
+    if not sizes:
+        labels = ["No Data"]
+        sizes = [1]
+
+    # Colors for pie chart
+    colors = ['#2E86C1', '#27AE60', '#F1C40F', '#E74C3C', '#8E44AD', '#1ABC9C']
+
+    # Create Pie Chart
+    plt.figure(figsize=(6, 6))
+    plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=140, colors=colors)
+    plt.title("Turf Performance (Bookings)")
+    plt.axis('equal')
+
+    # Save chart to memory
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    plt.close()
+
+    return HttpResponse(buffer.getvalue(), content_type='image/png')
